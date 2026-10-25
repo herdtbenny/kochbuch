@@ -55,6 +55,7 @@ export async function saveRecipe(formData: FormData): Promise<{ error: string } 
     servings: optionalInt(formData, "servings"),
     sourceUrl: optionalText(formData, "sourceUrl"),
     lastCookedOn: optionalDate(formData, "lastCookedOn"),
+    todo: formData.get("todo") === "on",
   };
 
   let recipeId: number;
@@ -151,12 +152,19 @@ export async function saveNotes(recipeId: number, notes: string) {
   refresh();
 }
 
-/** "Heute gekocht": setzt das Datum auf heute (deutsche Zeit). */
+/** TODO-Schalter setzen oder entfernen. */
+export async function setTodo(recipeId: number, todo: boolean) {
+  await requirePerson();
+  await getDb().update(recipes).set({ todo }).where(eq(recipes.id, recipeId));
+  refresh();
+}
+
+/** "Heute gekocht": setzt das Datum auf heute (deutsche Zeit) und erledigt ein TODO. */
 export async function markCookedToday(recipeId: number) {
   const person = await requirePerson();
   const [updated] = await getDb()
     .update(recipes)
-    .set({ lastCookedOn: todayBerlin() })
+    .set({ lastCookedOn: todayBerlin(), todo: false })
     .where(eq(recipes.id, recipeId))
     .returning({ title: recipes.title });
   if (!updated) throw new Error("Rezept nicht gefunden");

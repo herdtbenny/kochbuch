@@ -1,4 +1,4 @@
-import { date, integer, jsonb, pgTable, primaryKey, serial, text, timestamp } from "drizzle-orm/pg-core";
+import { boolean, date, integer, jsonb, pgTable, primaryKey, serial, text, timestamp } from "drizzle-orm/pg-core";
 import type { ActivityMeta } from "../activity-format";
 
 export const recipes = pgTable("recipes", {
@@ -15,8 +15,10 @@ export const recipes = pgTable("recipes", {
   sourceUrl: text("source_url"),
   /** Gemeinsame Notizen von Benny & Lisa */
   notes: text("notes"),
-  /** Von Hand gepflegt; leer = noch nie gekocht (TODO) */
+  /** Von Hand gepflegt */
   lastCookedOn: date("last_cooked_on", { mode: "string" }),
+  /** "Wollen wir mal kochen" – einfacher Schalter */
+  todo: boolean("todo").notNull().default(false),
   createdBy: text("created_by").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });

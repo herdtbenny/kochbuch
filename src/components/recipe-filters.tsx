@@ -36,7 +36,7 @@ export function RecipeFilters({ q, kat, sort }: { q: string; kat: string; sort: 
 
   const filters = [
     { value: "", label: "Alle" },
-    { value: "todo", label: "TODO (noch nie gekocht)" },
+    { value: "todo", label: "TODO" },
     ...CATEGORIES.map((c) => ({ value: c, label: c })),
   ];
 

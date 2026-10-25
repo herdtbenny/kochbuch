@@ -31,7 +31,7 @@ export default async function HomePage({ searchParams }: PageProps<"/">) {
   const needle = q.toLowerCase();
   const recipes = all
     .filter((r) => !needle || `${r.title}\n${r.ingredients}\n${r.description ?? ""}`.toLowerCase().includes(needle))
-    .filter((r) => !kat || (kat === "todo" ? !r.lastCookedOn : r.category === kat))
+    .filter((r) => !kat || (kat === "todo" ? r.todo : r.category === kat))
     .sort(sorters[sort]);
 
   if (all.length === 0) {

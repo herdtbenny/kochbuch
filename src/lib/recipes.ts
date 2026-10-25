@@ -13,6 +13,7 @@ export type RecipeSummary = {
   ingredients: string;
   minutes: number | null;
   lastCookedOn: string | null;
+  todo: boolean;
   createdAt: Date;
   cover: string | null;
   scores: Scores;
@@ -63,6 +64,7 @@ export async function listRecipes(): Promise<RecipeSummary[]> {
     ingredients: recipe.ingredients,
     minutes: recipe.minutes,
     lastCookedOn: recipe.lastCookedOn,
+    todo: recipe.todo,
     createdAt: recipe.createdAt,
     cover: covers.get(recipe.id) ?? null,
     scores: scores.get(recipe.id) ?? {},

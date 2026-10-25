@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CookedTodayButton } from "@/components/cooked-today-button";
+import { TodoToggle } from "@/components/todo-toggle";
 import { Avatar } from "@/components/avatar";
 import { CookedBadge } from "@/components/cooked-badge";
 import { IngredientList } from "@/components/ingredient-list";
@@ -86,7 +87,8 @@ export default async function RecipePage({ params }: PageProps<"/rezepte/[id]">)
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
           <p className="text-sm font-medium text-accent">{recipe.category}</p>
           <CookedBadge date={recipe.lastCookedOn} className="text-sm" />
-          <div className="ml-auto">
+          <div className="ml-auto flex gap-2">
+            <TodoToggle recipeId={recipe.id} todo={recipe.todo} />
             <CookedTodayButton recipeId={recipe.id} cookedToday={recipe.lastCookedOn === todayBerlin()} />
           </div>
         </div>

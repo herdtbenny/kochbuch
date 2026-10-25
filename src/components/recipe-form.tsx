@@ -26,6 +26,7 @@ type ExistingRecipe = {
   servings: number | null;
   sourceUrl: string | null;
   lastCookedOn: string | null;
+  todo: boolean;
   photos: { id: number; url: string }[];
 };
 
@@ -216,7 +217,7 @@ export function RecipeForm({ recipe }: { recipe?: ExistingRecipe }) {
         />
       </section>
 
-      <Field label="Zuletzt gekocht" hint="leer lassen = TODO">
+      <Field label="Zuletzt gekocht" hint="optional">
         <input
           name="lastCookedOn"
           type="date"
@@ -225,6 +226,14 @@ export function RecipeForm({ recipe }: { recipe?: ExistingRecipe }) {
           className={`${inputClass} min-h-12`}
         />
       </Field>
+
+      <label className="flex items-center gap-3 rounded-2xl border border-line bg-surface px-4 py-3">
+        <input type="checkbox" name="todo" defaultChecked={recipe?.todo ?? false} className="size-5 accent-[var(--accent)]" />
+        <span>
+          <span className="font-medium">TODO</span>
+          <span className="text-muted"> – wollen wir mal kochen</span>
+        </span>
+      </label>
 
       <Field label="Link zum Original" hint="optional">
         <input

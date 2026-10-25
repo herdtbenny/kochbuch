@@ -10,6 +10,7 @@ export const recipes = pgTable("recipes", {
   ingredients: text("ingredients").notNull().default(""),
   /** Ein Schritt pro Zeile */
   steps: text("steps").notNull().default(""),
+  /** Nicht mehr benutzt */
   servings: integer("servings"),
   minutes: integer("minutes"),
   sourceUrl: text("source_url"),

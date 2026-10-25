@@ -52,7 +52,6 @@ export async function saveRecipe(formData: FormData): Promise<{ error: string } 
     ingredients: text(formData, "ingredients"),
     steps: text(formData, "steps"),
     minutes: optionalInt(formData, "minutes"),
-    servings: optionalInt(formData, "servings"),
     sourceUrl: optionalText(formData, "sourceUrl"),
     lastCookedOn: optionalDate(formData, "lastCookedOn"),
     todo: formData.get("todo") === "on",

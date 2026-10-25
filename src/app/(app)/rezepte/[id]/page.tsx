@@ -1,4 +1,4 @@
-import { ArrowLeft, ChefHat, Clock, Link as LinkIcon, Pencil, Users } from "lucide-react";
+import { ArrowLeft, ChefHat, Clock, Link as LinkIcon, Pencil } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -95,12 +95,6 @@ export default async function RecipePage({ params }: PageProps<"/rezepte/[id]">)
             <span className="inline-flex items-center gap-1.5">
               <Clock className="size-4" />
               {recipe.minutes} Min.
-            </span>
-          )}
-          {recipe.servings && (
-            <span className="inline-flex items-center gap-1.5">
-              <Users className="size-4" />
-              {recipe.servings} Portionen
             </span>
           )}
           {recipe.sourceUrl && (

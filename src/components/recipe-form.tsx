@@ -23,7 +23,6 @@ type ExistingRecipe = {
   ingredients: string;
   steps: string;
   minutes: number | null;
-  servings: number | null;
   sourceUrl: string | null;
   lastCookedOn: string | null;
   todo: boolean;
@@ -170,7 +169,7 @@ export function RecipeForm({ recipe }: { recipe?: ExistingRecipe }) {
         <input name="title" required defaultValue={recipe?.title} placeholder="z. B. Lisas Ofengemüse" className={inputClass} />
       </Field>
 
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 gap-3">
         <Field label="Kategorie">
           <select name="category" defaultValue={recipe?.category ?? DEFAULT_CATEGORY} className={`${inputClass} appearance-none`}>
             {CATEGORIES.map((c) => (
@@ -180,9 +179,6 @@ export function RecipeForm({ recipe }: { recipe?: ExistingRecipe }) {
         </Field>
         <Field label="Minuten">
           <input name="minutes" type="number" inputMode="numeric" min={1} defaultValue={recipe?.minutes ?? ""} className={inputClass} />
-        </Field>
-        <Field label="Portionen">
-          <input name="servings" type="number" inputMode="numeric" min={1} defaultValue={recipe?.servings ?? ""} className={inputClass} />
         </Field>
       </div>
 

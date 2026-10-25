@@ -13,6 +13,8 @@ export const recipes = pgTable("recipes", {
   servings: integer("servings"),
   minutes: integer("minutes"),
   sourceUrl: text("source_url"),
+  /** Gemeinsame Notizen von Benny & Lisa */
+  notes: text("notes"),
   /** Von Hand gepflegt; leer = noch nie gekocht (TODO) */
   lastCookedOn: date("last_cooked_on", { mode: "string" }),
   createdBy: text("created_by").notNull(),
@@ -38,6 +40,7 @@ export const ratings = pgTable(
       .references(() => recipes.id, { onDelete: "cascade" }),
     person: text("person").notNull(),
     score: integer("score").notNull(),
+    /** Früher persönlicher Kommentar – ersetzt durch gemeinsame Notizen am Rezept */
     comment: text("comment"),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },

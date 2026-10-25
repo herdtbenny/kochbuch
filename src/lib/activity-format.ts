@@ -22,6 +22,10 @@ export type ActivityItem = {
 
 export type UnreadActivity = { items: ActivityItem[]; unread: number };
 
+function shorten(text: string, max = 80) {
+  return text.length > max ? `${text.slice(0, max - 1)}…` : text;
+}
+
 function photosPhrase(count: number) {
   return count === 1 ? "ein Foto" : `${count} Fotos`;
 }
@@ -39,9 +43,9 @@ export function describeActivity({ actor, type, meta }: ActivityItem) {
     case "rated":
       return `${name} hat ${title} mit ${meta.score}/10 bewertet`;
     case "commented":
-      return `${name} hat ${title} kommentiert: „${meta.comment}“`;
-    case "cooked": // nur noch alte Einträge
-      return `${name} hat ${title} gekocht`;
+      return `${name} hat die Notizen zu ${title} geändert: „${shorten(meta.comment ?? "")}“`;
+    case "cooked":
+      return `${name} hat ${title} heute gekocht`;
   }
 }
 

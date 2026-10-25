@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChefHat } from "lucide-react";
 import { formatScore, ScorePills } from "@/components/score";
+import { StatsCategoryFilter } from "@/components/stats-category-filter";
 import { PEOPLE, PERSON_IDS } from "@/lib/people";
 import { CATEGORIES } from "@/lib/categories";
 import { averageScore, listRecipes, type RecipeSummary } from "@/lib/recipes";
@@ -12,7 +13,9 @@ function mean(values: number[]) {
   return values.length ? values.reduce((a, b) => a + b, 0) / values.length : null;
 }
 
-export default async function StatsPage() {
+export default async function StatsPage({ searchParams }: PageProps<"/statistik">) {
+  const { kat: katParam } = await searchParams;
+  const kat = typeof katParam === "string" && (CATEGORIES as readonly string[]).includes(katParam) ? katParam : "";
   const recipes = await listRecipes();
 
   if (recipes.length === 0) {
@@ -26,7 +29,8 @@ export default async function StatsPage() {
 
   const bothRated = recipes.filter((r) => PERSON_IDS.every((p) => r.scores[p]));
 
-  const topTogether = [...bothRated]
+  const topTogether = bothRated
+    .filter((r) => !kat || r.category === kat)
     .sort((a, b) => averageScore(b.scores)! - averageScore(a.scores)!)
     .slice(0, 5)
     .map((r) => ({ recipe: r, label: `${formatScore(averageScore(r.scores)!)}/10` }));
@@ -63,7 +67,16 @@ export default async function StatsPage() {
         ))}
       </div>
 
-      <RankList title="Eure Top 5" empty="Bewertet Rezepte beide, dann taucht hier eure Bestenliste auf." items={topTogether} />
+      <RankList
+        title="Eure Top 5"
+        action={<StatsCategoryFilter value={kat} />}
+        empty={
+          kat
+            ? `Noch kein ${kat}, das ihr beide bewertet habt.`
+            : "Bewertet Rezepte beide, dann taucht hier eure Bestenliste auf."
+        }
+        items={topTogether}
+      />
       {disagreements.length > 0 && (
         <RankList title="Hier seid ihr euch uneinig" items={disagreements} showScores />
       )}
@@ -112,18 +125,23 @@ function Tile({
 
 function RankList({
   title,
+  action,
   items,
   empty,
   showScores = false,
 }: {
   title: string;
+  action?: React.ReactNode;
   items: { recipe: RecipeSummary; label: string }[];
   empty?: string;
   showScores?: boolean;
 }) {
   return (
     <section className="space-y-3">
-      <h2 className="font-display text-2xl font-semibold">{title}</h2>
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="font-display text-2xl font-semibold">{title}</h2>
+        {action}
+      </div>
       {items.length === 0 ? (
         <p className="text-sm text-muted">{empty}</p>
       ) : (

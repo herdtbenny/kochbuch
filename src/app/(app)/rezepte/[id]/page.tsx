@@ -2,13 +2,17 @@ import { ArrowLeft, ChefHat, Clock, Link as LinkIcon, Pencil, Users } from "luci
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CommentForm } from "@/components/comment-form";
+import { CookedTodayButton } from "@/components/cooked-today-button";
+import { Avatar } from "@/components/avatar";
 import { CookedBadge } from "@/components/cooked-badge";
 import { IngredientList } from "@/components/ingredient-list";
-import { RatingPicker } from "@/components/rating-picker";
+import { NotesForm } from "@/components/notes-form";
+import { RatingSlider } from "@/components/rating-slider";
 import { formatScore } from "@/components/score";
 import { requirePerson } from "@/lib/auth";
+import { avatarUrls } from "@/lib/avatars";
 import { PEOPLE, PERSON_IDS } from "@/lib/people";
+import { todayBerlin } from "@/lib/format-date";
 import { averageScore, getRecipe, lines } from "@/lib/recipes";
 
 export async function generateMetadata({ params }: PageProps<"/rezepte/[id]">) {
@@ -28,6 +32,7 @@ export default async function RecipePage({ params }: PageProps<"/rezepte/[id]">)
     PERSON_IDS.flatMap((p) => (recipe.ratings[p] ? [[p, recipe.ratings[p]!.score]] : [])),
   );
   const average = averageScore(scores);
+  const avatars = avatarUrls();
 
   return (
     <article className="space-y-8">
@@ -78,9 +83,12 @@ export default async function RecipePage({ params }: PageProps<"/rezepte/[id]">)
 
       {/* Titel */}
       <header className="space-y-3">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
           <p className="text-sm font-medium text-accent">{recipe.category}</p>
           <CookedBadge date={recipe.lastCookedOn} className="text-sm" />
+          <div className="ml-auto">
+            <CookedTodayButton recipeId={recipe.id} cookedToday={recipe.lastCookedOn === todayBerlin()} />
+          </div>
         </div>
         <h1 className="font-display text-4xl leading-tight font-semibold text-balance">{recipe.title}</h1>
         {recipe.description && <p className="text-lg text-muted">{recipe.description}</p>}
@@ -111,61 +119,6 @@ export default async function RecipePage({ params }: PageProps<"/rezepte/[id]">)
         </div>
       </header>
 
-      {/* Bewertungen */}
-      <section className="space-y-3">
-        <div className="flex items-baseline justify-between">
-          <h2 className="font-display text-2xl font-semibold">Bewertung</h2>
-          {average !== null && (
-            <p className="text-sm text-muted">
-              Zusammen <span className="font-semibold text-ink tabular-nums">{formatScore(average)}/10</span>
-            </p>
-          )}
-        </div>
-        <div className="grid gap-3 sm:grid-cols-2">
-          {PERSON_IDS.map((p) => {
-            const rating = recipe.ratings[p];
-            const mine = p === person;
-            return (
-              <div key={p} className="space-y-3 rounded-3xl border border-line bg-surface p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={`flex size-8 items-center justify-center rounded-full text-sm font-semibold text-white ${PEOPLE[p].bg}`}
-                    >
-                      {PEOPLE[p].initial}
-                    </span>
-                    <span className="font-medium">{mine ? "Du" : PEOPLE[p].name}</span>
-                  </div>
-                  <span className={`font-display text-3xl font-semibold tabular-nums ${PEOPLE[p].text}`}>
-                    {rating ? (
-                      <>
-                        {rating.score}
-                        <span className="text-base text-muted">/10</span>
-                      </>
-                    ) : (
-                      "–"
-                    )}
-                  </span>
-                </div>
-
-                {mine ? (
-                  <>
-                    <RatingPicker recipeId={recipe.id} score={rating?.score} activeClass={PEOPLE[p].bg} />
-                    {rating && (
-                      <CommentForm recipeId={recipe.id} comment={rating.comment} />
-                    )}
-                  </>
-                ) : rating?.comment ? (
-                  <p className="text-sm text-muted italic">„{rating.comment}“</p>
-                ) : !rating ? (
-                  <p className="text-sm text-muted">Noch nicht bewertet.</p>
-                ) : null}
-              </div>
-            );
-          })}
-        </div>
-      </section>
-
       {/* Zutaten */}
       {ingredients.length > 0 && (
         <section className="space-y-2">
@@ -190,6 +143,37 @@ export default async function RecipePage({ params }: PageProps<"/rezepte/[id]">)
           </ol>
         </section>
       )}
+
+      {/* Bewertungen */}
+      <section className="space-y-3">
+        <div className="flex items-baseline justify-between">
+          <h2 className="font-display text-2xl font-semibold">Bewertung</h2>
+          {average !== null && (
+            <p className="text-sm text-muted">
+              Zusammen <span className="font-semibold text-ink tabular-nums">{formatScore(average)}/10</span>
+            </p>
+          )}
+        </div>
+        <div className="space-y-4 rounded-3xl border border-line bg-surface p-4">
+          {PERSON_IDS.map((p) => (
+            <RatingSlider
+              key={p}
+              recipeId={recipe.id}
+              score={recipe.ratings[p]?.score}
+              label={p === person ? "Du" : PEOPLE[p].name}
+              editable={p === person}
+              colorClass={PEOPLE[p].text}
+              avatar={<Avatar person={p} url={avatars[p]} className="size-8 text-xs" />}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* Notizen */}
+      <section className="space-y-3">
+        <h2 className="font-display text-2xl font-semibold">Notizen</h2>
+        <NotesForm recipeId={recipe.id} notes={recipe.notes} />
+      </section>
     </article>
   );
 }

@@ -5,6 +5,7 @@ import { and, eq, inArray, max } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { logActivity, markSeen, recipeTitle, unreadFor } from "./activity";
 import { requirePerson } from "./auth";
+import { todayBerlin } from "./format-date";
 import { getDb } from "./db";
 import { photos, pushSubscriptions, ratings, recipes } from "./db/schema";
 import { CATEGORIES, DEFAULT_CATEGORY } from "./categories";
@@ -136,17 +137,30 @@ export async function rateRecipe(recipeId: number, score: number) {
   refresh();
 }
 
-export async function saveRatingComment(recipeId: number, formData: FormData) {
+/** Gemeinsame Notizen zum Rezept speichern. */
+export async function saveNotes(recipeId: number, notes: string) {
   const person = await requirePerson();
-  const comment = optionalText(formData, "comment");
-  const [previous] = await getDb()
-    .update(ratings)
-    .set({ comment, updatedAt: new Date() })
-    .where(and(eq(ratings.recipeId, recipeId), eq(ratings.person, person)))
-    .returning({ id: ratings.recipeId });
-  if (previous && comment) {
-    await logActivity(person, "commented", recipeId, { title: await recipeTitle(recipeId), comment });
-  }
+  const value = notes.trim() || null;
+  const [updated] = await getDb()
+    .update(recipes)
+    .set({ notes: value })
+    .where(eq(recipes.id, recipeId))
+    .returning({ title: recipes.title });
+  if (!updated) throw new Error("Rezept nicht gefunden");
+  if (value) await logActivity(person, "commented", recipeId, { title: updated.title, comment: value });
+  refresh();
+}
+
+/** "Heute gekocht": setzt das Datum auf heute (deutsche Zeit). */
+export async function markCookedToday(recipeId: number) {
+  const person = await requirePerson();
+  const [updated] = await getDb()
+    .update(recipes)
+    .set({ lastCookedOn: todayBerlin() })
+    .where(eq(recipes.id, recipeId))
+    .returning({ title: recipes.title });
+  if (!updated) throw new Error("Rezept nicht gefunden");
+  await logActivity(person, "cooked", recipeId, { title: updated.title });
   refresh();
 }
 

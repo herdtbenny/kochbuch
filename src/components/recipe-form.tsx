@@ -7,7 +7,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition, type FormEvent } from "react";
 import { saveRecipe } from "@/lib/actions";
-import { CATEGORIES } from "@/lib/categories";
+import { CATEGORIES, DEFAULT_CATEGORY } from "@/lib/categories";
 import { resizeImage } from "@/lib/resize-image";
 
 const MAX_NEW_PHOTOS = 8;
@@ -146,7 +146,7 @@ export function RecipeForm({ recipe }: { recipe?: ExistingRecipe }) {
 
       <div className="grid grid-cols-3 gap-3">
         <Field label="Kategorie">
-          <select name="category" defaultValue={recipe?.category ?? CATEGORIES[0]} className={`${inputClass} appearance-none`}>
+          <select name="category" defaultValue={recipe?.category ?? DEFAULT_CATEGORY} className={`${inputClass} appearance-none`}>
             {CATEGORIES.map((c) => (
               <option key={c}>{c}</option>
             ))}

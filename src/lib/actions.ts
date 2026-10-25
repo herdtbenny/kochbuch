@@ -8,7 +8,7 @@ import { logActivity, markSeen, recipeTitle, unreadFor } from "./activity";
 import { requirePerson } from "./auth";
 import { getDb } from "./db";
 import { photos, ratings, recipes } from "./db/schema";
-import { CATEGORIES } from "./categories";
+import { CATEGORIES, DEFAULT_CATEGORY } from "./categories";
 import { averageScore, listRecipes } from "./recipes";
 
 function text(formData: FormData, key: string) {
@@ -41,7 +41,7 @@ export async function saveRecipe(formData: FormData): Promise<{ error: string } 
   const category = text(formData, "category");
   const values = {
     title,
-    category: (CATEGORIES as readonly string[]).includes(category) ? category : CATEGORIES[0],
+    category: (CATEGORIES as readonly string[]).includes(category) ? category : DEFAULT_CATEGORY,
     description: optionalText(formData, "description"),
     ingredients: text(formData, "ingredients"),
     steps: text(formData, "steps"),
@@ -145,16 +145,27 @@ export async function saveRatingComment(recipeId: number, formData: FormData) {
   refresh();
 }
 
-/** "Was kochen wir heute?" – ein zufälliges Rezept, bevorzugt eins, das euch geschmeckt hat. */
-export async function pickRandomRecipe(excludeId?: number) {
+/**
+ * "Was kochen wir heute?" – ein zufälliges Rezept der gewählten Kategorie (leer = egal),
+ * bevorzugt eins, das euch geschmeckt hat.
+ */
+export async function pickRandomRecipe(category: string, excludeId?: number) {
   await requirePerson();
-  const all = (await listRecipes()).filter((r) => r.id !== excludeId);
+  const all = (await listRecipes()).filter((r) => r.id !== excludeId && (!category || r.category === category));
   const good = all.filter((r) => (averageScore(r.scores) ?? 7) >= 6);
   const pool = good.length ? good : all;
   if (pool.length === 0) return null;
 
-  const { id, title, category, cover, scores, minutes } = pool[Math.floor(Math.random() * pool.length)];
-  return { id, title, category, cover, scores, minutes, canReroll: all.length > 1 };
+  const pick = pool[Math.floor(Math.random() * pool.length)];
+  return {
+    id: pick.id,
+    title: pick.title,
+    category: pick.category,
+    cover: pick.cover,
+    scores: pick.scores,
+    minutes: pick.minutes,
+    canReroll: all.length > 1,
+  };
 }
 
 /** Für das Live-Popup: neue Aktivitäten der anderen Person seit `afterId`. */

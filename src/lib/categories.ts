@@ -1,11 +1,3 @@
-export const CATEGORIES = [
-  "Hauptgericht",
-  "Pasta",
-  "Suppe",
-  "Salat",
-  "Frühstück",
-  "Snack",
-  "Dessert",
-  "Backen",
-  "Getränk",
-] as const;
+export const CATEGORIES = ["Frühstück", "Snack", "Suppe", "Salat", "Dessert", "Hauptgericht"] as const;
+
+export const DEFAULT_CATEGORY = "Hauptgericht";

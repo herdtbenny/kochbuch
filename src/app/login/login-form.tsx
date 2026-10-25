@@ -2,8 +2,10 @@
 
 import { useActionState } from "react";
 import { Avatar } from "@/components/avatar";
-import { PEOPLE, PERSON_IDS, type Person } from "@/lib/people";
+import { PEOPLE, type Person } from "@/lib/people";
 import { login, type LoginState } from "./actions";
+
+const LOGIN_ORDER: Person[] = ["lisa", "benny"];
 
 export function LoginForm({ avatars }: { avatars: Partial<Record<Person, string>> }) {
   const [state, action, pending] = useActionState<LoginState, FormData>(login, {});
@@ -13,7 +15,7 @@ export function LoginForm({ avatars }: { avatars: Partial<Record<Person, string>
       <fieldset>
         <legend className="mb-3 text-sm font-medium text-muted">Wer bist du?</legend>
         <div className="grid grid-cols-2 gap-3">
-          {PERSON_IDS.map((id) => (
+          {LOGIN_ORDER.map((id) => (
             <label
               key={id}
               className="flex cursor-pointer flex-col items-center gap-2 rounded-2xl border-2 border-line bg-surface p-4 transition-colors has-checked:border-accent"

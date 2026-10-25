@@ -3,7 +3,6 @@
 import { del, put } from "@vercel/blob";
 import { and, eq, inArray, max } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { logActivity, markSeen, recipeTitle, unreadFor } from "./activity";
 import { requirePerson } from "./auth";
 import { getDb } from "./db";
@@ -113,7 +112,6 @@ export async function deleteRecipe(id: number) {
   await db.delete(recipes).where(eq(recipes.id, id));
   if (photoRows.length) await del(photoRows.map((photo) => photo.url));
   refresh();
-  redirect("/");
 }
 
 /** Bewertung der eingeloggten Person setzen (1–10). */

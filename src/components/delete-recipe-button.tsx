@@ -1,10 +1,13 @@
 "use client";
 
-import { Trash } from "lucide-react";
+import { LoaderCircle, Trash } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { deleteRecipe } from "@/lib/actions";
+import { toast } from "@/lib/toast";
 
 export function DeleteRecipeButton({ id, title }: { id: number; title: string }) {
+  const router = useRouter();
   const [pending, startTransition] = useTransition();
 
   return (
@@ -12,13 +15,20 @@ export function DeleteRecipeButton({ id, title }: { id: number; title: string })
       type="button"
       disabled={pending}
       onClick={() => {
-        if (confirm(`„${title}“ wirklich löschen? Fotos, Bewertungen und Kochtage gehen verloren.`)) {
-          startTransition(() => deleteRecipe(id));
-        }
+        if (!confirm(`„${title}“ wirklich löschen? Fotos und Bewertungen gehen verloren.`)) return;
+        startTransition(async () => {
+          try {
+            await deleteRecipe(id);
+            toast(`„${title}“ gelöscht`);
+            router.push("/");
+          } catch {
+            toast("Löschen hat nicht geklappt. Bitte nochmal versuchen.", "error");
+          }
+        });
       }}
       className="mx-auto flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium text-accent disabled:opacity-60"
     >
-      <Trash className="size-4" />
+      {pending ? <LoaderCircle className="size-4 animate-spin" /> : <Trash className="size-4" />}
       {pending ? "Wird gelöscht …" : "Rezept löschen"}
     </button>
   );

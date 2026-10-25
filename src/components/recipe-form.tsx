@@ -2,13 +2,14 @@
 
 /* eslint-disable @next/next/no-img-element -- Vorschauen sind lokale blob:-URLs */
 
-import { ImagePlus, X } from "lucide-react";
+import { ImagePlus, LoaderCircle, X } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition, type FormEvent } from "react";
 import { saveRecipe } from "@/lib/actions";
 import { CATEGORIES, DEFAULT_CATEGORY } from "@/lib/categories";
 import { resizeImage } from "@/lib/resize-image";
+import { SAVE_FAILED, toast } from "@/lib/toast";
 import { ListInput } from "./list-input";
 
 const MAX_NEW_PHOTOS = 8;
@@ -52,6 +53,7 @@ export function RecipeForm({ recipe }: { recipe?: ExistingRecipe }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [stage, setStage] = useState("Speichern …");
   const [newPhotos, setNewPhotos] = useState<{ file: File; preview: string }[]>([]);
   const [removed, setRemoved] = useState<number[]>([]);
   const fileInput = useRef<HTMLInputElement>(null);
@@ -91,16 +93,29 @@ export function RecipeForm({ recipe }: { recipe?: ExistingRecipe }) {
 
     startTransition(async () => {
       try {
+        if (newPhotos.length) setStage("Fotos werden vorbereitet …");
         for (const { file } of newPhotos) formData.append("photos", await resizeImage(file));
       } catch {
         setError("Ein Foto konnte nicht gelesen werden.");
+        toast("Ein Foto konnte nicht gelesen werden.", "error");
         return;
       }
-      const result = await saveRecipe(formData);
+
+      setStage(newPhotos.length ? `${newPhotos.length === 1 ? "Foto wird" : "Fotos werden"} hochgeladen …` : "Speichern …");
+      let result: Awaited<ReturnType<typeof saveRecipe>>;
+      try {
+        result = await saveRecipe(formData);
+      } catch {
+        setError(SAVE_FAILED);
+        toast(SAVE_FAILED, "error");
+        return;
+      }
       if ("error" in result) {
         setError(result.error);
+        toast(result.error, "error");
         return;
       }
+      toast(recipe ? "Änderungen gespeichert" : "Rezept gespeichert");
       router.push(`/rezepte/${result.id}`);
     });
   }
@@ -219,9 +234,10 @@ export function RecipeForm({ recipe }: { recipe?: ExistingRecipe }) {
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-full bg-accent px-5 py-3.5 font-semibold text-accent-ink transition-opacity disabled:opacity-60"
+        className="flex w-full items-center justify-center gap-2 rounded-full bg-accent px-5 py-3.5 font-semibold text-accent-ink transition-opacity disabled:opacity-80"
       >
-        {pending ? "Speichern …" : recipe ? "Änderungen speichern" : "Rezept speichern"}
+        {pending && <LoaderCircle className="size-5 animate-spin" />}
+        {pending ? stage : recipe ? "Änderungen speichern" : "Rezept speichern"}
       </button>
     </form>
   );

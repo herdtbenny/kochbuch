@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Avatar } from "@/components/avatar";
 import { BottomNav } from "@/components/bottom-nav";
 import { Notifications } from "@/components/notifications";
+import { Toaster } from "@/components/toaster";
 import { unreadFor } from "@/lib/activity";
 import { requirePerson } from "@/lib/auth";
 import { avatarUrls } from "@/lib/avatars";
@@ -53,6 +54,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
         </div>
       </header>
       <main className="flex-1 px-4 pb-36">{children}</main>
+      <Toaster />
       <BottomNav />
     </div>
   );

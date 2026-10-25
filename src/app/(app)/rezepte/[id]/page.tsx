@@ -2,10 +2,10 @@ import { ArrowLeft, ChefHat, Clock, Link as LinkIcon, Pencil, Users } from "luci
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { CommentForm } from "@/components/comment-form";
 import { IngredientList } from "@/components/ingredient-list";
 import { RatingPicker } from "@/components/rating-picker";
 import { formatScore } from "@/components/score";
-import { saveRatingComment } from "@/lib/actions";
 import { requirePerson } from "@/lib/auth";
 import { PEOPLE, PERSON_IDS } from "@/lib/people";
 import { averageScore, getRecipe, lines } from "@/lib/recipes";
@@ -148,20 +148,7 @@ export default async function RecipePage({ params }: PageProps<"/rezepte/[id]">)
                   <>
                     <RatingPicker recipeId={recipe.id} score={rating?.score} activeClass={PEOPLE[p].bg} />
                     {rating && (
-                      <form action={saveRatingComment.bind(null, recipe.id)} className="flex gap-2">
-                        <input
-                          name="comment"
-                          defaultValue={rating.comment ?? ""}
-                          placeholder="Kommentar, z. B. „mehr Knoblauch“"
-                          className="min-w-0 flex-1 rounded-full border border-line bg-paper px-4 py-2 text-sm outline-none focus:border-accent"
-                        />
-                        <button
-                          type="submit"
-                          className="shrink-0 rounded-full bg-ink px-4 py-2 text-sm font-medium text-paper"
-                        >
-                          Speichern
-                        </button>
-                      </form>
+                      <CommentForm recipeId={recipe.id} comment={rating.comment} />
                     )}
                   </>
                 ) : rating?.comment ? (

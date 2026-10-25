@@ -1,10 +1,10 @@
 "use client";
 
 import { useActionState } from "react";
+import { Avatar } from "@/components/avatar";
 import { PEOPLE, PERSON_IDS, type Person } from "@/lib/people";
 import { login, type LoginState } from "./actions";
 
-/** Profilbilder liegen in Vercel Blob, die Adressen kommen aus Umgebungsvariablen. */
 export function LoginForm({ avatars }: { avatars: Partial<Record<Person, string>> }) {
   const [state, action, pending] = useActionState<LoginState, FormData>(login, {});
 
@@ -19,16 +19,7 @@ export function LoginForm({ avatars }: { avatars: Partial<Record<Person, string>
               className="flex cursor-pointer flex-col items-center gap-2 rounded-2xl border-2 border-line bg-surface p-4 transition-colors has-checked:border-accent"
             >
               <input type="radio" name="person" value={id} className="sr-only" required />
-              {avatars[id] ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={avatars[id]} alt="" className={`size-16 rounded-full object-cover ${PEOPLE[id].avatarPosition}`} />
-              ) : (
-                <span
-                  className={`flex size-16 items-center justify-center rounded-full text-xl font-semibold text-white ${PEOPLE[id].bg}`}
-                >
-                  {PEOPLE[id].initial}
-                </span>
-              )}
+              <Avatar person={id} url={avatars[id]} className="size-16 text-xl" />
               <span className="font-medium">{PEOPLE[id].name}</span>
             </label>
           ))}

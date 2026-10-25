@@ -1,4 +1,5 @@
 import { ChefHat } from "lucide-react";
+import { avatarUrls } from "@/lib/avatars";
 import { LoginForm } from "./login-form";
 
 export const metadata = { title: "Anmelden · Unser Kochbuch" };
@@ -13,9 +14,7 @@ export default function LoginPage() {
         <h1 className="font-display text-4xl font-semibold tracking-tight">Unser Kochbuch</h1>
         <p className="mt-2 text-muted">Unsere Lieblingsrezepte, gesammelt.</p>
       </div>
-      <LoginForm
-        avatars={{ benny: process.env.AVATAR_BENNY_URL, lisa: process.env.AVATAR_LISA_URL }}
-      />
+      <LoginForm avatars={avatarUrls()} />
     </main>
   );
 }

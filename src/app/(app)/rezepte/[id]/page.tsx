@@ -28,7 +28,6 @@ export default async function RecipePage({ params }: PageProps<"/rezepte/[id]">)
   if (!recipe) notFound();
 
   const ingredients = lines(recipe.ingredients);
-  const steps = lines(recipe.steps);
   const scores = Object.fromEntries(
     PERSON_IDS.flatMap((p) => (recipe.ratings[p] ? [[p, recipe.ratings[p]!.score]] : [])),
   );
@@ -126,19 +125,10 @@ export default async function RecipePage({ params }: PageProps<"/rezepte/[id]">)
       )}
 
       {/* Zubereitung */}
-      {steps.length > 0 && (
+      {recipe.steps.trim() && (
         <section className="space-y-3">
           <h2 className="font-display text-2xl font-semibold">Zubereitung</h2>
-          <ol className="space-y-4">
-            {steps.map((step, index) => (
-              <li key={index} className="flex gap-3">
-                <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-accent/10 text-sm font-semibold text-accent">
-                  {index + 1}
-                </span>
-                <p className="pt-0.5">{step}</p>
-              </li>
-            ))}
-          </ol>
+          <p className="whitespace-pre-line">{recipe.steps.trim()}</p>
         </section>
       )}
 

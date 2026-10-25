@@ -15,17 +15,15 @@ export function ListInput({
   initial,
   placeholder,
   addLabel,
-  numbered = false,
 }: {
   name: string;
   initial: string[];
   placeholder: string;
   addLabel: string;
-  numbered?: boolean;
 }) {
   const [items, setItems] = useState(() => (initial.length ? initial.map((text) => row(text)) : [row()]));
   const [focusId, setFocusId] = useState<number | null>(null);
-  const fields = useRef(new Map<number, HTMLInputElement | HTMLTextAreaElement>());
+  const fields = useRef(new Map<number, HTMLInputElement>());
 
   useEffect(() => {
     if (focusId !== null) fields.current.get(focusId)?.focus();
@@ -45,7 +43,7 @@ export function ListInput({
     setItems((current) => current.map((item, i) => (i === index ? { ...item, text } : item)));
   }
 
-  // Zutaten: Enter springt in ein neues Feld. Schritte: Enter ohne Shift ebenfalls.
+  // Enter springt in ein neues Feld.
   function onKeyDown(event: KeyboardEvent, index: number) {
     if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
       event.preventDefault();
@@ -67,40 +65,19 @@ export function ListInput({
       <ol className="space-y-2">
         {items.map((item, index) => (
           <li key={item.id} className="flex items-start gap-2">
-            {numbered && (
-              <span className="mt-2 flex size-7 shrink-0 items-center justify-center rounded-full bg-accent/10 text-sm font-semibold text-accent tabular-nums">
-                {index + 1}
-              </span>
-            )}
-            {numbered ? (
-              <textarea
-                ref={(el) => {
-                  if (el) fields.current.set(item.id, el);
-                  else fields.current.delete(item.id);
-                }}
-                value={item.text}
-                onChange={(e) => update(index, e.target.value)}
-                onKeyDown={(e) => onKeyDown(e, index)}
-                rows={2}
-                placeholder={index === 0 ? placeholder : `${index + 1}. Schritt …`}
-                aria-label={`Schritt ${index + 1}`}
-                className={`${fieldClass} min-h-[4.5rem] resize-none [field-sizing:content]`}
-              />
-            ) : (
-              <input
-                ref={(el) => {
-                  if (el) fields.current.set(item.id, el);
-                  else fields.current.delete(item.id);
-                }}
-                value={item.text}
-                onChange={(e) => update(index, e.target.value)}
-                onKeyDown={(e) => onKeyDown(e, index)}
-                enterKeyHint="next"
-                placeholder={index === 0 ? placeholder : ""}
-                aria-label={`Zutat ${index + 1}`}
-                className={fieldClass}
-              />
-            )}
+            <input
+              ref={(el) => {
+                if (el) fields.current.set(item.id, el);
+                else fields.current.delete(item.id);
+              }}
+              value={item.text}
+              onChange={(e) => update(index, e.target.value)}
+              onKeyDown={(e) => onKeyDown(e, index)}
+              enterKeyHint="next"
+              placeholder={index === 0 ? placeholder : ""}
+              aria-label={`Zutat ${index + 1}`}
+              className={fieldClass}
+            />
             <button
               type="button"
               onClick={() => remove(index)}

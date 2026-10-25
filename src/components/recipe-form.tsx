@@ -202,16 +202,15 @@ export function RecipeForm({ recipe }: { recipe?: ExistingRecipe }) {
         />
       </section>
 
-      <section>
-        <h2 className="mb-1.5 text-sm font-medium">Zubereitung</h2>
-        <ListInput
+      <Field label="Zubereitung">
+        <textarea
           name="steps"
-          initial={toLines(recipe?.steps)}
-          placeholder="z. B. Ofen auf 200 °C vorheizen."
-          addLabel="Schritt hinzufügen"
-          numbered
+          rows={6}
+          defaultValue={recipe?.steps ?? ""}
+          placeholder="z. B. Ofen auf 200 °C vorheizen. Kartoffeln schälen …"
+          className={`${inputClass} min-h-40 [field-sizing:content]`}
         />
-      </section>
+      </Field>
 
       <Field label="Zuletzt gekocht" hint="optional">
         <input

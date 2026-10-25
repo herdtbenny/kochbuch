@@ -4,7 +4,7 @@ import { getDb } from "./db";
 import { pushSubscriptions } from "./db/schema";
 import type { Person } from "./people";
 
-export type PushPayload = { title: string; body: string; url: string };
+export type PushPayload = { title: string; body: string; url: string; icon?: string };
 
 let configured = false;
 
@@ -30,7 +30,7 @@ export async function pushToPerson(person: Person, payload: PushPayload) {
       try {
         await webpush.sendNotification(
           { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
-          JSON.stringify(payload),
+          JSON.stringify({ icon: process.env.APPLE_ICON_URL, ...payload }),
           { TTL: 60 * 60 * 24 },
         );
       } catch (error) {

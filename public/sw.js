@@ -5,8 +5,7 @@ self.addEventListener("push", (event) => {
   event.waitUntil(
     self.registration.showNotification(data.title || "Unser Kochbuch", {
       body: data.body,
-      icon: "/apple-icon",
-      badge: "/apple-icon",
+      icon: data.icon,
       data: { url: data.url || "/" },
     }),
   );

@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Unser Kochbuch",
     short_name: "Kochbuch",
-    description: "Alles, was Benny und Lisa gekocht haben.",
+    description: "Die Rezepte von Benny und Lisa.",
     start_url: "/",
     display: "standalone",
     background_color: "#fbf7f0",

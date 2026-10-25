@@ -40,6 +40,21 @@
   --font-display: var(--font-fraunces);
 }
 
+/* Nie seitlich scrollen – `clip` statt `hidden`, damit fixed/sticky weiter funktioniert */
+html,
+body {
+  overflow-x: clip;
+}
+
+/* iOS zoomt bei Eingabefeldern unter 16px hinein und die Seite wird seitlich verschiebbar */
+@media (max-width: 640px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
 body {
   background: var(--paper);
   color: var(--ink);

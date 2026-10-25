@@ -5,7 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRef, useState, useTransition } from "react";
 import { pickRandomRecipe } from "@/lib/actions";
-import { relativeDay } from "@/lib/dates";
 import { ScorePills } from "./score";
 
 type Pick = Awaited<ReturnType<typeof pickRandomRecipe>>;
@@ -75,19 +74,12 @@ export function RandomRecipeDialog({ triggerClass }: { triggerClass: string }) {
                       <p className="text-sm font-medium text-accent">{pick.category}</p>
                       <h2 className="font-display text-2xl leading-tight font-semibold text-balance">{pick.title}</h2>
                       <ScorePills scores={pick.scores} />
-                      <p className="flex flex-wrap items-center gap-x-2 text-sm text-muted">
-                        <span>
-                          {pick.lastCooked
-                            ? `${pick.cookCount}× gekocht · zuletzt ${relativeDay(pick.lastCooked, pick.today)}`
-                            : "Noch nie gekocht"}
-                        </span>
-                        {pick.minutes && (
-                          <span className="inline-flex items-center gap-1">
-                            <Clock className="size-3.5" />
-                            {pick.minutes} Min.
-                          </span>
-                        )}
-                      </p>
+                      {pick.minutes && (
+                        <p className="inline-flex items-center gap-1 text-sm text-muted">
+                          <Clock className="size-3.5" />
+                          {pick.minutes} Min.
+                        </p>
+                      )}
                     </>
                   )}
                 </div>

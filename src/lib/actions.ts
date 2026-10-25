@@ -6,9 +6,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { logActivity, markSeen, recipeTitle, unreadFor } from "./activity";
 import { requirePerson } from "./auth";
-import { daysBetween, todayBerlin } from "./dates";
 import { getDb } from "./db";
-import { cooks, photos, ratings, recipes } from "./db/schema";
+import { photos, ratings, recipes } from "./db/schema";
 import { CATEGORIES } from "./categories";
 import { averageScore, listRecipes } from "./recipes";
 
@@ -24,10 +23,6 @@ function optionalText(formData: FormData, key: string) {
 function optionalInt(formData: FormData, key: string) {
   const value = Number.parseInt(text(formData, key), 10);
   return Number.isFinite(value) && value > 0 ? value : null;
-}
-
-function isDate(value: string) {
-  return /^\d{4}-\d{2}-\d{2}$/.test(value);
 }
 
 function refresh() {
@@ -66,10 +61,6 @@ export async function saveRecipe(formData: FormData): Promise<{ error: string } 
       .values({ ...values, createdBy: person })
       .returning({ id: recipes.id });
     recipeId = created.id;
-
-    if (formData.get("cookedToday") === "on") {
-      await db.insert(cooks).values({ recipeId, cookedOn: todayBerlin(), createdBy: person });
-    }
   }
 
   // Entfernte Fotos löschen
@@ -154,45 +145,16 @@ export async function saveRatingComment(recipeId: number, formData: FormData) {
   refresh();
 }
 
-export async function addCook(recipeId: number, formData: FormData) {
-  const person = await requirePerson();
-  const cookedOn = text(formData, "cookedOn");
-  await getDb()
-    .insert(cooks)
-    .values({
-      recipeId,
-      cookedOn: isDate(cookedOn) ? cookedOn : todayBerlin(),
-      note: optionalText(formData, "note"),
-      createdBy: person,
-    });
-  await logActivity(person, "cooked", recipeId, { title: await recipeTitle(recipeId) });
-  refresh();
-}
-
-export async function deleteCook(cookId: number) {
-  await requirePerson();
-  await getDb().delete(cooks).where(eq(cooks.id, cookId));
-  refresh();
-}
-
-/**
- * "Was kochen wir heute?" – ein zufälliges Rezept, das gut ankam (oder noch unbewertet ist)
- * und in den letzten zwei Wochen nicht auf dem Tisch stand.
- */
+/** "Was kochen wir heute?" – ein zufälliges Rezept, bevorzugt eins, das euch geschmeckt hat. */
 export async function pickRandomRecipe(excludeId?: number) {
   await requirePerson();
-  const today = todayBerlin();
   const all = (await listRecipes()).filter((r) => r.id !== excludeId);
-
-  const good = all.filter(
-    (r) => (averageScore(r.scores) ?? 7) >= 6 && (!r.lastCooked || daysBetween(r.lastCooked, today) >= 14),
-  );
+  const good = all.filter((r) => (averageScore(r.scores) ?? 7) >= 6);
   const pool = good.length ? good : all;
   if (pool.length === 0) return null;
 
-  const { id, title, category, cover, scores, cookCount, lastCooked, minutes } =
-    pool[Math.floor(Math.random() * pool.length)];
-  return { id, title, category, cover, scores, cookCount, lastCooked, minutes, today, canReroll: all.length > 1 };
+  const { id, title, category, cover, scores, minutes } = pool[Math.floor(Math.random() * pool.length)];
+  return { id, title, category, cover, scores, minutes, canReroll: all.length > 1 };
 }
 
 /** Für das Live-Popup: neue Aktivitäten der anderen Person seit `afterId`. */

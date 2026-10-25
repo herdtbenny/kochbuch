@@ -1,13 +1,12 @@
-import { ArrowLeft, CalendarPlus, ChefHat, Clock, Link as LinkIcon, Pencil, Users, X } from "lucide-react";
+import { ArrowLeft, ChefHat, Clock, Link as LinkIcon, Pencil, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { IngredientList } from "@/components/ingredient-list";
 import { RatingPicker } from "@/components/rating-picker";
 import { formatScore } from "@/components/score";
-import { addCook, deleteCook, saveRatingComment } from "@/lib/actions";
+import { saveRatingComment } from "@/lib/actions";
 import { requirePerson } from "@/lib/auth";
-import { formatDate, relativeDay, todayBerlin } from "@/lib/dates";
 import { PEOPLE, PERSON_IDS } from "@/lib/people";
 import { averageScore, getRecipe, lines } from "@/lib/recipes";
 
@@ -22,7 +21,6 @@ export default async function RecipePage({ params }: PageProps<"/rezepte/[id]">)
   const recipe = await getRecipe(Number(id));
   if (!recipe) notFound();
 
-  const today = todayBerlin();
   const ingredients = lines(recipe.ingredients);
   const steps = lines(recipe.steps);
   const scores = Object.fromEntries(
@@ -174,72 +172,6 @@ export default async function RecipePage({ params }: PageProps<"/rezepte/[id]">)
               </div>
             );
           })}
-        </div>
-      </section>
-
-      {/* Gekocht */}
-      <section className="space-y-3">
-        <h2 className="font-display text-2xl font-semibold">Gekocht</h2>
-        <div className="rounded-3xl border border-line bg-surface p-4">
-          <form action={addCook.bind(null, recipe.id)}>
-            <button
-              type="submit"
-              className="flex w-full items-center justify-center gap-2 rounded-full bg-accent px-5 py-3 font-semibold text-accent-ink"
-            >
-              <CalendarPlus className="size-5" />
-              Heute gekocht
-            </button>
-          </form>
-
-          <details className="group mt-3">
-            <summary className="cursor-pointer list-none text-center text-sm text-muted">
-              Anderes Datum oder Notiz …
-            </summary>
-            <form action={addCook.bind(null, recipe.id)} className="mt-3 space-y-2">
-              <input
-                type="date"
-                name="cookedOn"
-                defaultValue={today}
-                max={today}
-                className="w-full rounded-full border border-line bg-paper px-4 py-2 outline-none focus:border-accent"
-              />
-              <input
-                name="note"
-                placeholder="Notiz, z. B. „mit Feta statt Mozzarella“"
-                className="w-full rounded-full border border-line bg-paper px-4 py-2 outline-none focus:border-accent"
-              />
-              <button type="submit" className="w-full rounded-full bg-ink px-4 py-2.5 text-sm font-medium text-paper">
-                Eintragen
-              </button>
-            </form>
-          </details>
-
-          {recipe.cooks.length > 0 ? (
-            <ul className="mt-4 divide-y divide-line border-t border-line">
-              {recipe.cooks.map((cook) => (
-                <li key={cook.id} className="flex items-start justify-between gap-3 py-2.5">
-                  <div>
-                    <p className="text-sm font-medium">
-                      {formatDate(cook.cookedOn)}{" "}
-                      <span className="font-normal text-muted">· {relativeDay(cook.cookedOn, today)}</span>
-                    </p>
-                    {cook.note && <p className="text-sm text-muted">{cook.note}</p>}
-                  </div>
-                  <form action={deleteCook.bind(null, cook.id)}>
-                    <button
-                      type="submit"
-                      aria-label="Eintrag löschen"
-                      className="flex size-7 items-center justify-center rounded-full text-muted"
-                    >
-                      <X className="size-4" />
-                    </button>
-                  </form>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="mt-4 text-center text-sm text-muted">Noch nie gekocht – auf der Wunschliste.</p>
-          )}
         </div>
       </section>
 

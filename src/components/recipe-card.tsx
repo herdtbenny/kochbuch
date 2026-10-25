@@ -1,12 +1,11 @@
 import { ChefHat, Clock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { relativeDay } from "@/lib/dates";
 import type { RecipeSummary } from "@/lib/recipes";
 import { ScorePills } from "./score";
 
 /** Listeneintrag: Foto links, Infos rechts */
-export function RecipeCard({ recipe, today }: { recipe: RecipeSummary; today: string }) {
+export function RecipeCard({ recipe }: { recipe: RecipeSummary }) {
   return (
     <Link
       href={`/rezepte/${recipe.id}`}
@@ -32,21 +31,12 @@ export function RecipeCard({ recipe, today }: { recipe: RecipeSummary; today: st
         <p className="text-xs font-medium text-accent">{recipe.category}</p>
         <h2 className="line-clamp-2 font-display text-lg leading-snug font-semibold">{recipe.title}</h2>
         <ScorePills scores={recipe.scores} />
-        <p className="flex flex-wrap items-center gap-x-2 text-xs text-muted">
-          {recipe.lastCooked ? (
-            <span>
-              {recipe.cookCount}× gekocht · {relativeDay(recipe.lastCooked, today)}
-            </span>
-          ) : (
-            <span>Noch nie gekocht</span>
-          )}
-          {recipe.minutes && (
-            <span className="inline-flex items-center gap-0.5">
-              <Clock className="size-3" />
-              {recipe.minutes} Min.
-            </span>
-          )}
-        </p>
+        {recipe.minutes && (
+          <p className="inline-flex items-center gap-1 text-xs text-muted">
+            <Clock className="size-3" />
+            {recipe.minutes} Min.
+          </p>
+        )}
       </div>
     </Link>
   );

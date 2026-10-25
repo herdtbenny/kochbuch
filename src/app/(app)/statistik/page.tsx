@@ -2,9 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChefHat } from "lucide-react";
 import { formatScore, ScorePills } from "@/components/score";
-import { daysBetween, relativeDay, todayBerlin } from "@/lib/dates";
 import { PEOPLE, PERSON_IDS } from "@/lib/people";
-import { averageScore, listCookDates, listRecipes, type RecipeSummary } from "@/lib/recipes";
+import { CATEGORIES } from "@/lib/categories";
+import { averageScore, listRecipes, type RecipeSummary } from "@/lib/recipes";
 
 export const metadata = { title: "Statistik · Unser Kochbuch" };
 
@@ -12,18 +12,8 @@ function mean(values: number[]) {
   return values.length ? values.reduce((a, b) => a + b, 0) / values.length : null;
 }
 
-/** Die letzten 12 Monate als "YYYY-MM", ältester zuerst */
-function lastMonths(today: string, count = 12) {
-  const [year, month] = today.split("-").map(Number);
-  return Array.from({ length: count }, (_, i) => {
-    const d = new Date(Date.UTC(year, month - 1 - (count - 1 - i), 1));
-    return d.toISOString().slice(0, 7);
-  });
-}
-
 export default async function StatsPage() {
-  const [recipes, cookDates] = await Promise.all([listRecipes(), listCookDates()]);
-  const today = todayBerlin();
+  const recipes = await listRecipes();
 
   if (recipes.length === 0) {
     return <p className="py-20 text-center text-muted">Sobald ihr Rezepte eintragt, gibt&apos;s hier Statistiken.</p>;
@@ -48,28 +38,12 @@ export default async function StatsPage() {
     .slice(0, 3)
     .map(({ recipe, diff }) => ({ recipe, label: `${diff} Punkte` }));
 
-  const mostCooked = recipes
-    .filter((r) => r.cookCount > 0)
-    .sort((a, b) => b.cookCount - a.cookCount)
-    .slice(0, 5)
-    .map((r) => ({ recipe: r, label: `${r.cookCount}×` }));
-
-  const forgotten = recipes
-    .filter((r) => (averageScore(r.scores) ?? 0) >= 7 && r.lastCooked && daysBetween(r.lastCooked, today) >= 60)
-    .sort((a, b) => a.lastCooked!.localeCompare(b.lastCooked!))
-    .slice(0, 5)
-    .map((r) => ({ recipe: r, label: relativeDay(r.lastCooked!, today) }));
-
-  const months = lastMonths(today);
-  const perMonth = months.map((key) => ({
-    key,
-    count: cookDates.filter((c) => c.cookedOn.startsWith(key)).length,
-  }));
-  const maxPerMonth = Math.max(1, ...perMonth.map((m) => m.count));
-  const monthName = (key: string, style: "short" | "long") =>
-    new Intl.DateTimeFormat("de-DE", { month: style, year: style === "long" ? "numeric" : undefined, timeZone: "UTC" }).format(
-      new Date(`${key}-01`),
-    );
+  const perCategory = CATEGORIES.map((category) => ({
+    category,
+    count: recipes.filter((r) => r.category === category).length,
+  })).filter((c) => c.count > 0);
+  const maxPerCategory = Math.max(1, ...perCategory.map((c) => c.count));
+  const unrated = recipes.filter((r) => PERSON_IDS.some((p) => !r.scores[p])).length;
 
   return (
     <div className="space-y-10">
@@ -77,7 +51,7 @@ export default async function StatsPage() {
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <Tile label="Rezepte" value={String(recipes.length)} />
-        <Tile label="Mal gekocht" value={String(cookDates.length)} />
+        <Tile label="Noch zu bewerten" value={String(unrated)} />
         {personAverages.map(({ person, average }) => (
           <Tile
             key={person}
@@ -89,40 +63,27 @@ export default async function StatsPage() {
         ))}
       </div>
 
-      <section className="space-y-4">
-        <h2 className="font-display text-2xl font-semibold">Gekocht pro Monat</h2>
-        <div className="rounded-3xl border border-line bg-surface p-4">
-          <div className="flex h-40 items-end gap-1.5">
-            {perMonth.map((m) => (
-              <div key={m.key} className="group relative flex h-full flex-1 flex-col justify-end">
-                <span className="pointer-events-none absolute -top-1 left-1/2 z-10 -translate-x-1/2 -translate-y-full rounded-lg bg-ink px-2 py-1 text-xs whitespace-nowrap text-paper opacity-0 transition-opacity group-hover:opacity-100">
-                  {monthName(m.key, "long")}: {m.count}×
-                </span>
-                <div
-                  role="img"
-                  aria-label={`${monthName(m.key, "long")}: ${m.count}× gekocht`}
-                  className={`w-full rounded-t-[4px] ${m.count ? "bg-accent" : "bg-line"}`}
-                  style={{ height: m.count ? `${(m.count / maxPerMonth) * 100}%` : "2px" }}
-                />
-              </div>
-            ))}
-          </div>
-          <div className="mt-2 flex gap-1.5 border-t border-line pt-2">
-            {perMonth.map((m) => (
-              <span key={m.key} className="flex-1 text-center text-[10px] text-muted">
-                {monthName(m.key, "short").slice(0, 3)}
-              </span>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <RankList title="Eure Top 5" empty="Bewertet Rezepte beide, dann taucht hier eure Bestenliste auf." items={topTogether} />
-      <RankList title="Am häufigsten gekocht" empty="Noch nichts gekocht." items={mostCooked} />
       {disagreements.length > 0 && (
         <RankList title="Hier seid ihr euch uneinig" items={disagreements} showScores />
       )}
-      {forgotten.length > 0 && <RankList title="Lange nicht mehr gekocht" items={forgotten} />}
+      <section className="space-y-3">
+        <h2 className="font-display text-2xl font-semibold">Nach Kategorie</h2>
+        <ul className="space-y-2.5 rounded-3xl border border-line bg-surface p-4">
+          {perCategory.map(({ category, count }) => (
+            <li key={category} className="grid grid-cols-[6.5rem_1fr_2rem] items-center gap-3 text-sm">
+              <span className="truncate">{category}</span>
+              <span className="h-2 overflow-hidden rounded-full bg-line">
+                <span
+                  className="block h-full rounded-full bg-accent"
+                  style={{ width: `${(count / maxPerCategory) * 100}%` }}
+                />
+              </span>
+              <span className="text-right font-semibold tabular-nums">{count}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
     </div>
   );
 }

@@ -1,15 +1,15 @@
 # Unser Kochbuch
 
-Ein gemeinsames Kochbuch für Benny & Lisa: Alles, was wir gekocht haben, mit Fotos, getrennten Bewertungen und einem Kochtagebuch. Läuft als Web-App und lässt sich auf dem iPhone über „Teilen → Zum Home-Bildschirm“ wie eine App installieren.
+Ein gemeinsames Rezeptbuch für Benny & Lisa: alle unsere Rezepte, mit Fotos und getrennten Bewertungen. Läuft als Web-App und lässt sich auf dem iPhone über „Teilen → Zum Home-Bildschirm“ wie eine App installieren.
 
 ## Funktionen
 
 - **Rezepte** mit Fotos (werden im Browser verkleinert), Kategorie, Zeit, Portionen, Zutaten, Zubereitung und Link zum Original
 - **Zwei Bewertungen** (1–10): Jeder bewertet für sich, plus optionaler Kommentar
-- **Kochtagebuch**: „Heute gekocht“ mit einem Tipp, oder mit Datum und Notiz nachtragen
-- **Suche** nach Gericht oder Zutat („was machen wir mit der Zucchini?“), Filter nach Kategorie und „Noch nie gekocht“ (= Wunschliste), Sortierung nach Bewertung, Häufigkeit usw.
-- **Zufall**: schlägt ein gut bewertetes Gericht vor, das länger nicht dran war
-- **Statistik**: Durchschnittsbewertungen, Top 5, wo ihr euch uneinig seid, meistgekocht, lange nicht mehr gekocht, Kochen pro Monat
+- **Benachrichtigungen**: Rückblick „Seit du weg warst“, Live-Hinweis und Aktivitätsseite, wenn der andere etwas einträgt
+- **Suche** nach Gericht oder Zutat („was machen wir mit der Zucchini?“), Filter nach Kategorie, Sortierung nach Bewertung, Name oder Datum
+- **Zufall**: schlägt ein gut bewertetes Gericht vor
+- **Statistik**: Durchschnittsbewertungen, Top 5, wo ihr euch uneinig seid, Rezepte pro Kategorie
 - **Zutaten abhaken** beim Einkaufen oder Kochen
 - Login mit gemeinsamem Passwort + Auswahl „Benny“ oder „Lisa“
 

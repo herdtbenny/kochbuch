@@ -40,7 +40,7 @@ export function describeActivity({ actor, type, meta }: ActivityItem) {
       return `${name} hat ${title} mit ${meta.score}/10 bewertet`;
     case "commented":
       return `${name} hat ${title} kommentiert: „${meta.comment}“`;
-    case "cooked":
+    case "cooked": // nur noch alte Einträge
       return `${name} hat ${title} gekocht`;
   }
 }

@@ -201,13 +201,6 @@ export function RecipeForm({ recipe }: { recipe?: ExistingRecipe }) {
         />
       </Field>
 
-      {!recipe && (
-        <label className="flex items-center gap-3 rounded-2xl border border-line bg-surface px-4 py-3">
-          <input type="checkbox" name="cookedToday" defaultChecked className="size-5 accent-[var(--accent)]" />
-          <span>Heute gekocht</span>
-        </label>
-      )}
-
       {error && (
         <p role="alert" className="text-sm text-accent">
           {error}

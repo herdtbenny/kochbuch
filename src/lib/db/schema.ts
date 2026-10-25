@@ -42,7 +42,7 @@ export const ratings = pgTable(
   (t) => [primaryKey({ columns: [t.recipeId, t.person] })],
 );
 
-/** Jedes Mal, wenn ein Rezept gekocht wurde */
+/** Früheres Kochtagebuch – wird nicht mehr benutzt, Tabelle bleibt nur wegen vorhandener Daten */
 export const cooks = pgTable("cooks", {
   id: serial("id").primaryKey(),
   recipeId: integer("recipe_id")

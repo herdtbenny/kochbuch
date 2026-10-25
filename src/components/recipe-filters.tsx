@@ -18,7 +18,7 @@ export function RecipeFilters({ q, kat, sort }: { q: string; kat: string; sort: 
     const params = new URLSearchParams();
     if (values.q) params.set("q", values.q);
     if (values.kat) params.set("kat", values.kat);
-    if (values.sort !== "zuletzt") params.set("sort", values.sort);
+    if (values.sort !== "neu") params.set("sort", values.sort);
     const search = params.toString();
     startTransition(() => router.replace(search ? `/?${search}` : "/", { scroll: false }));
   }
@@ -36,7 +36,6 @@ export function RecipeFilters({ q, kat, sort }: { q: string; kat: string; sort: 
 
   const filters = [
     { value: "", label: "Alle" },
-    { value: "nie", label: "Noch nie gekocht" },
     ...CATEGORIES.map((c) => ({ value: c, label: c })),
   ];
 

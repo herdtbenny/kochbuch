@@ -2,7 +2,6 @@ import { ChefHat, Plus } from "lucide-react";
 import Link from "next/link";
 import { RecipeCard } from "@/components/recipe-card";
 import { RecipeFilters } from "@/components/recipe-filters";
-import { todayBerlin } from "@/lib/dates";
 import { averageScore, listRecipes, type RecipeSummary } from "@/lib/recipes";
 import { SORTS, type Sort } from "@/lib/sorts";
 
@@ -13,12 +12,9 @@ function first(value: string | string[] | undefined) {
 const byDesc = (a: number | null | undefined, b: number | null | undefined) => (b ?? -1) - (a ?? -1);
 
 const sorters: Record<Sort, (a: RecipeSummary, b: RecipeSummary) => number> = {
-  zuletzt: (a, b) =>
-    (b.lastCooked ?? "").localeCompare(a.lastCooked ?? "") || b.createdAt.getTime() - a.createdAt.getTime(),
   beste: (a, b) => byDesc(averageScore(a.scores), averageScore(b.scores)),
   benny: (a, b) => byDesc(a.scores.benny, b.scores.benny),
   lisa: (a, b) => byDesc(a.scores.lisa, b.scores.lisa),
-  oft: (a, b) => b.cookCount - a.cookCount,
   neu: (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
   az: (a, b) => a.title.localeCompare(b.title, "de"),
 };
@@ -28,15 +24,14 @@ export default async function HomePage({ searchParams }: PageProps<"/">) {
   const q = first(params.q);
   const kat = first(params.kat);
   const sortParam = first(params.sort);
-  const sort: Sort = sortParam in SORTS ? (sortParam as Sort) : "zuletzt";
+  const sort: Sort = sortParam in SORTS ? (sortParam as Sort) : "neu";
 
   const all = await listRecipes();
-  const today = todayBerlin();
 
   const needle = q.toLowerCase();
   const recipes = all
     .filter((r) => !needle || `${r.title}\n${r.ingredients}\n${r.description ?? ""}`.toLowerCase().includes(needle))
-    .filter((r) => !kat || (kat === "nie" ? r.cookCount === 0 : r.category === kat))
+    .filter((r) => !kat || r.category === kat)
     .sort(sorters[sort]);
 
   if (all.length === 0) {
@@ -47,7 +42,7 @@ export default async function HomePage({ searchParams }: PageProps<"/">) {
         </div>
         <h1 className="font-display text-2xl font-semibold">Noch leer hier</h1>
         <p className="mt-2 max-w-xs text-muted">
-          Was habt ihr zuletzt gekocht? Leg das erste Rezept an, am besten gleich mit Foto.
+          Leg euer erstes Rezept an, am besten gleich mit Foto.
         </p>
         <Link
           href="/rezepte/neu"
@@ -73,7 +68,7 @@ export default async function HomePage({ searchParams }: PageProps<"/">) {
       {recipes.length ? (
         <div className="grid gap-3 md:grid-cols-2">
           {recipes.map((recipe) => (
-            <RecipeCard key={recipe.id} recipe={recipe} today={today} />
+            <RecipeCard key={recipe.id} recipe={recipe} />
           ))}
         </div>
       ) : (

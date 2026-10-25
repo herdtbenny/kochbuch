@@ -1,10 +1,8 @@
 export const SORTS = {
-  zuletzt: "Zuletzt gekocht",
+  neu: "Neu hinzugefügt",
   beste: "Beste Bewertung",
   benny: "Bennys Favoriten",
   lisa: "Lisas Favoriten",
-  oft: "Am häufigsten",
-  neu: "Neu hinzugefügt",
   az: "A–Z",
 } as const;
 

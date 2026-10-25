@@ -7,7 +7,7 @@ const fraunces = Fraunces({ variable: "--font-fraunces", subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Unser Kochbuch",
-  description: "Alles, was Benny und Lisa gekocht haben – mit Fotos und Bewertungen.",
+  description: "Die Rezepte von Benny und Lisa – mit Fotos und Bewertungen.",
   appleWebApp: { capable: true, title: "Kochbuch", statusBarStyle: "default" },
 };
 

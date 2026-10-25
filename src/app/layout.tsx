@@ -9,6 +9,8 @@ export const metadata: Metadata = {
   title: "Unser Kochbuch",
   description: "Die Rezepte von Benny und Lisa – mit Fotos und Bewertungen.",
   appleWebApp: { capable: true, title: "Kochbuch", statusBarStyle: "default" },
+  // Tab-Icon: Comic aus dem Hintergrundbild, liegt in Vercel Blob (nicht im öffentlichen Repo)
+  icons: process.env.FAVICON_URL ? { icon: { url: process.env.FAVICON_URL, type: "image/png" } } : undefined,
 };
 
 export const viewport: Viewport = {

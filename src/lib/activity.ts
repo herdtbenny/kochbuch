@@ -1,8 +1,16 @@
 import { and, count, desc, eq, gt, ne, sql } from "drizzle-orm";
-import type { ActivityItem, ActivityMeta, ActivityType, UnreadActivity } from "./activity-format";
+import { after } from "next/server";
+import {
+  describeActivity,
+  type ActivityItem,
+  type ActivityMeta,
+  type ActivityType,
+  type UnreadActivity,
+} from "./activity-format";
 import { getDb } from "./db";
 import { activities, activityReads, recipes } from "./db/schema";
-import { isPerson, type Person } from "./people";
+import { isPerson, otherPerson, type Person } from "./people";
+import { pushToPerson } from "./push";
 
 type ActivityRow = typeof activities.$inferSelect;
 
@@ -27,9 +35,10 @@ export async function recipeTitle(recipeId: number) {
 
 export async function logActivity(actor: Person, type: ActivityType, recipeId: number, meta: ActivityMeta) {
   const db = getDb();
+  let replaced = false;
   if (type === "rated") {
     // Mehrfaches Umbewerten innerhalb kurzer Zeit nur einmal melden
-    await db
+    const removed = await db
       .delete(activities)
       .where(
         and(
@@ -38,9 +47,23 @@ export async function logActivity(actor: Person, type: ActivityType, recipeId: n
           eq(activities.recipeId, recipeId),
           gt(activities.createdAt, new Date(Date.now() - 10 * 60_000)),
         ),
-      );
+      )
+      .returning({ id: activities.id });
+    replaced = removed.length > 0;
   }
-  await db.insert(activities).values({ actor, type, recipeId, meta });
+  const [row] = await db.insert(activities).values({ actor, type, recipeId, meta }).returning();
+
+  // Push an die andere Person – nach der Antwort, damit das Speichern nicht wartet
+  const item = toItem(row);
+  if (item && !replaced) {
+    after(() =>
+      pushToPerson(otherPerson(actor), {
+        title: "Unser Kochbuch",
+        body: describeActivity(item),
+        url: `/rezepte/${recipeId}`,
+      }),
+    );
+  }
 }
 
 async function lastSeenId(person: Person) {

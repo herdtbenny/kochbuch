@@ -72,3 +72,12 @@ export const activityReads = pgTable("activity_reads", {
   person: text("person").primaryKey(),
   lastSeenId: integer("last_seen_id").notNull().default(0),
 });
+
+/** Push-Abos pro Gerät (ein Endpoint = ein Browser/Homescreen-App) */
+export const pushSubscriptions = pgTable("push_subscriptions", {
+  endpoint: text("endpoint").primaryKey(),
+  person: text("person").notNull(),
+  p256dh: text("p256dh").notNull(),
+  auth: text("auth").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});

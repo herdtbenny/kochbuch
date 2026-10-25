@@ -1,6 +1,7 @@
 import { Bell } from "lucide-react";
 import Link from "next/link";
 import { MarkActivitySeen } from "@/components/mark-activity-seen";
+import { PushToggle } from "@/components/push-toggle";
 import { recentActivity } from "@/lib/activity";
 import { describeActivity, timeAgo } from "@/lib/activity-format";
 import { PEOPLE } from "@/lib/people";
@@ -14,6 +15,7 @@ export default async function ActivityPage() {
     <div className="space-y-6">
       <h1 className="font-display text-3xl font-semibold">Aktivität</h1>
       <MarkActivitySeen uptoId={items[0]?.id ?? 0} />
+      <PushToggle />
 
       {items.length === 0 ? (
         <div className="flex flex-col items-center py-16 text-center text-muted">

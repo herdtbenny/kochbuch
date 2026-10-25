@@ -6,8 +6,9 @@ import { revalidatePath } from "next/cache";
 import { logActivity, markSeen, recipeTitle, unreadFor } from "./activity";
 import { requirePerson } from "./auth";
 import { getDb } from "./db";
-import { photos, ratings, recipes } from "./db/schema";
+import { photos, pushSubscriptions, ratings, recipes } from "./db/schema";
 import { CATEGORIES, DEFAULT_CATEGORY } from "./categories";
+import { pushToPerson } from "./push";
 import { averageScore, listRecipes } from "./recipes";
 
 function text(formData: FormData, key: string) {
@@ -181,4 +182,31 @@ export async function fetchNewActivity(afterId: number) {
 export async function markActivitySeen(uptoId: number) {
   const person = await requirePerson();
   if (Number.isInteger(uptoId) && uptoId > 0) await markSeen(person, uptoId);
+}
+
+type PushSubscriptionInput = { endpoint?: string; keys?: { p256dh?: string; auth?: string } };
+
+/** Push-Abo dieses Geräts speichern (für die eingeloggte Person). */
+export async function savePushSubscription(subscription: PushSubscriptionInput) {
+  const person = await requirePerson();
+  const { endpoint, keys } = subscription;
+  if (!endpoint?.startsWith("https://") || !keys?.p256dh || !keys.auth) throw new Error("Ungültiges Push-Abo");
+  await getDb()
+    .insert(pushSubscriptions)
+    .values({ endpoint, person, p256dh: keys.p256dh, auth: keys.auth })
+    .onConflictDoUpdate({ target: pushSubscriptions.endpoint, set: { person, p256dh: keys.p256dh, auth: keys.auth } });
+}
+
+export async function removePushSubscription(endpoint: string) {
+  await requirePerson();
+  await getDb().delete(pushSubscriptions).where(eq(pushSubscriptions.endpoint, endpoint));
+}
+
+export async function sendTestPush() {
+  const person = await requirePerson();
+  await pushToPerson(person, {
+    title: "Unser Kochbuch",
+    body: "Push-Benachrichtigungen funktionieren.",
+    url: "/aktivitaet",
+  });
 }

@@ -21,7 +21,7 @@ export function LoginForm({ avatars }: { avatars: Partial<Record<Person, string>
               <input type="radio" name="person" value={id} className="sr-only" required />
               {avatars[id] ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={avatars[id]} alt="" className="size-16 rounded-full object-cover object-top" />
+                <img src={avatars[id]} alt="" className="size-16 rounded-full object-cover object-[center_15%]" />
               ) : (
                 <span
                   className={`flex size-16 items-center justify-center rounded-full text-xl font-semibold text-white ${PEOPLE[id].bg}`}

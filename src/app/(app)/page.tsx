@@ -71,7 +71,7 @@ export default async function HomePage({ searchParams }: PageProps<"/">) {
       </p>
 
       {recipes.length ? (
-        <div className="grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-3">
+        <div className="grid gap-3 md:grid-cols-2">
           {recipes.map((recipe) => (
             <RecipeCard key={recipe.id} recipe={recipe} today={today} />
           ))}

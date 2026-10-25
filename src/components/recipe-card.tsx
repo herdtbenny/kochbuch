@@ -5,29 +5,32 @@ import { relativeDay } from "@/lib/dates";
 import type { RecipeSummary } from "@/lib/recipes";
 import { ScorePills } from "./score";
 
+/** Listeneintrag: Foto links, Infos rechts */
 export function RecipeCard({ recipe, today }: { recipe: RecipeSummary; today: string }) {
   return (
-    <Link href={`/rezepte/${recipe.id}`} className="group block">
-      <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-line">
+    <Link
+      href={`/rezepte/${recipe.id}`}
+      className="group flex items-center gap-4 rounded-3xl border border-line bg-surface p-2.5 pr-4"
+    >
+      <div className="relative size-24 shrink-0 overflow-hidden rounded-2xl bg-line sm:size-28">
         {recipe.cover ? (
           <Image
             src={recipe.cover}
             alt=""
             fill
-            sizes="(min-width: 768px) 360px, 50vw"
+            sizes="112px"
             className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
           <div className="flex size-full items-center justify-center text-muted/60">
-            <ChefHat className="size-10" strokeWidth={1.4} />
+            <ChefHat className="size-8" strokeWidth={1.4} />
           </div>
         )}
-        <span className="absolute top-2 left-2 rounded-full bg-surface/90 px-2.5 py-0.5 text-[11px] font-medium backdrop-blur">
-          {recipe.category}
-        </span>
       </div>
-      <div className="mt-2.5 space-y-1.5 px-0.5">
-        <h2 className="font-display text-lg leading-snug font-semibold text-balance">{recipe.title}</h2>
+
+      <div className="min-w-0 flex-1 space-y-1.5">
+        <p className="text-xs font-medium text-accent">{recipe.category}</p>
+        <h2 className="line-clamp-2 font-display text-lg leading-snug font-semibold">{recipe.title}</h2>
         <ScorePills scores={recipe.scores} />
         <p className="flex flex-wrap items-center gap-x-2 text-xs text-muted">
           {recipe.lastCooked ? (

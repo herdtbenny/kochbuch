@@ -44,7 +44,11 @@
 html,
 body {
   overflow-x: clip;
-  /* Auch hinter den Safari-Leisten und beim Überscrollen die Papierfarbe zeigen */
+}
+
+/* Papierfarbe nur auf <html>: reicht hinter die Safari-Leisten. <body> bleibt durchsichtig,
+   sonst verdeckt es das Hintergrundbild (das mit -z-10 hinter dem Inhalt liegt). */
+html {
   background: var(--paper);
 }
 
@@ -58,7 +62,6 @@ body {
 }
 
 body {
-  background: var(--paper);
   color: var(--ink);
   -webkit-tap-highlight-color: transparent;
 }

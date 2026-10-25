@@ -17,16 +17,18 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
   return (
     <div className="mx-auto flex min-h-dvh max-w-3xl flex-col">
       {background && (
-        // Liegt in Vercel Blob statt im (öffentlichen) Repo und wird erst nach dem Login ausgeliefert
+        // Liegt in Vercel Blob statt im (öffentlichen) Repo und wird erst nach dem Login ausgeliefert.
+        // Winzige Bilddatei, die hochskaliert von selbst weich wirkt – kein teurer CSS-Blur beim Scrollen.
+        // h-lvh reicht bis unter die Safari-Leisten, damit unten nichts abgeschnitten aussieht.
         <div
           aria-hidden
-          className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
+          className="pointer-events-none fixed inset-x-0 top-0 -z-10 h-lvh overflow-hidden"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={background}
             alt=""
-            className="size-full scale-105 object-cover object-[20%_center] blur-[3px]"
+            className="size-full object-cover object-[20%_center]"
           />
           <div className="absolute inset-0 bg-paper/80" />
         </div>

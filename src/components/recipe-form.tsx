@@ -223,7 +223,7 @@ export function RecipeForm({ recipe }: { recipe?: ExistingRecipe }) {
           type="date"
           max={todayBerlin()}
           defaultValue={recipe?.lastCookedOn ?? ""}
-          className={`${inputClass} min-h-12`}
+          className={`${inputClass} block min-h-12 max-w-full min-w-0 appearance-none text-left [&::-webkit-date-and-time-value]:text-left`}
         />
       </Field>
 

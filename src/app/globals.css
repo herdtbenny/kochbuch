@@ -44,6 +44,8 @@
 html,
 body {
   overflow-x: clip;
+  /* Auch hinter den Safari-Leisten und beim Überscrollen die Papierfarbe zeigen */
+  background: var(--paper);
 }
 
 /* iOS zoomt bei Eingabefeldern unter 16px hinein und die Seite wird seitlich verschiebbar */

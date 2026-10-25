@@ -84,7 +84,7 @@ export function ListInput({
                 rows={2}
                 placeholder={index === 0 ? placeholder : `${index + 1}. Schritt …`}
                 aria-label={`Schritt ${index + 1}`}
-                className={`${fieldClass} resize-none [field-sizing:content]`}
+                className={`${fieldClass} min-h-[4.5rem] resize-none [field-sizing:content]`}
               />
             ) : (
               <input

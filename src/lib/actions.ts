@@ -19,6 +19,11 @@ function optionalText(formData: FormData, key: string) {
   return text(formData, key) || null;
 }
 
+function optionalDate(formData: FormData, key: string) {
+  const value = text(formData, key);
+  return /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : null;
+}
+
 function optionalInt(formData: FormData, key: string) {
   const value = Number.parseInt(text(formData, key), 10);
   return Number.isFinite(value) && value > 0 ? value : null;
@@ -47,6 +52,7 @@ export async function saveRecipe(formData: FormData): Promise<{ error: string } 
     minutes: optionalInt(formData, "minutes"),
     servings: optionalInt(formData, "servings"),
     sourceUrl: optionalText(formData, "sourceUrl"),
+    lastCookedOn: optionalDate(formData, "lastCookedOn"),
   };
 
   let recipeId: number;

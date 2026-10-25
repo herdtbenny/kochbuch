@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition, type FormEvent } from "react";
 import { saveRecipe } from "@/lib/actions";
 import { CATEGORIES, DEFAULT_CATEGORY } from "@/lib/categories";
+import { todayBerlin } from "@/lib/format-date";
 import { resizeImage } from "@/lib/resize-image";
 import { SAVE_FAILED, toast } from "@/lib/toast";
 import { ListInput } from "./list-input";
@@ -24,6 +25,7 @@ type ExistingRecipe = {
   minutes: number | null;
   servings: number | null;
   sourceUrl: string | null;
+  lastCookedOn: string | null;
   photos: { id: number; url: string }[];
 };
 
@@ -213,6 +215,16 @@ export function RecipeForm({ recipe }: { recipe?: ExistingRecipe }) {
           numbered
         />
       </section>
+
+      <Field label="Zuletzt gekocht" hint="leer lassen = TODO">
+        <input
+          name="lastCookedOn"
+          type="date"
+          max={todayBerlin()}
+          defaultValue={recipe?.lastCookedOn ?? ""}
+          className={`${inputClass} min-h-12`}
+        />
+      </Field>
 
       <Field label="Link zum Original" hint="optional">
         <input

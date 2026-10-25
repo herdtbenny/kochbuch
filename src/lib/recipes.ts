@@ -12,6 +12,7 @@ export type RecipeSummary = {
   category: string;
   ingredients: string;
   minutes: number | null;
+  lastCookedOn: string | null;
   createdAt: Date;
   cover: string | null;
   scores: Scores;
@@ -61,6 +62,7 @@ export async function listRecipes(): Promise<RecipeSummary[]> {
     category: recipe.category,
     ingredients: recipe.ingredients,
     minutes: recipe.minutes,
+    lastCookedOn: recipe.lastCookedOn,
     createdAt: recipe.createdAt,
     cover: covers.get(recipe.id) ?? null,
     scores: scores.get(recipe.id) ?? {},

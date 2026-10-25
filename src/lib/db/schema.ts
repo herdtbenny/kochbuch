@@ -13,6 +13,8 @@ export const recipes = pgTable("recipes", {
   servings: integer("servings"),
   minutes: integer("minutes"),
   sourceUrl: text("source_url"),
+  /** Von Hand gepflegt; leer = noch nie gekocht (TODO) */
+  lastCookedOn: date("last_cooked_on", { mode: "string" }),
   createdBy: text("created_by").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });

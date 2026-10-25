@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CommentForm } from "@/components/comment-form";
+import { CookedBadge } from "@/components/cooked-badge";
 import { IngredientList } from "@/components/ingredient-list";
 import { RatingPicker } from "@/components/rating-picker";
 import { formatScore } from "@/components/score";
@@ -77,7 +78,10 @@ export default async function RecipePage({ params }: PageProps<"/rezepte/[id]">)
 
       {/* Titel */}
       <header className="space-y-3">
-        <p className="text-sm font-medium text-accent">{recipe.category}</p>
+        <div className="flex items-center gap-3">
+          <p className="text-sm font-medium text-accent">{recipe.category}</p>
+          <CookedBadge date={recipe.lastCookedOn} className="text-sm" />
+        </div>
         <h1 className="font-display text-4xl leading-tight font-semibold text-balance">{recipe.title}</h1>
         {recipe.description && <p className="text-lg text-muted">{recipe.description}</p>}
         <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted">

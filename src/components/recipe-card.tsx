@@ -2,6 +2,7 @@ import { ChefHat, Clock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import type { RecipeSummary } from "@/lib/recipes";
+import { CookedBadge } from "./cooked-badge";
 import { ScorePills } from "./score";
 
 /** Listeneintrag: Foto links, Infos rechts */
@@ -28,15 +29,21 @@ export function RecipeCard({ recipe }: { recipe: RecipeSummary }) {
       </div>
 
       <div className="min-w-0 flex-1 space-y-1.5">
-        <p className="text-xs font-medium text-accent">{recipe.category}</p>
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-xs font-medium text-accent">{recipe.category}</p>
+          {!recipe.lastCookedOn && <CookedBadge date={null} />}
+        </div>
         <h2 className="line-clamp-2 font-display text-lg leading-snug font-semibold">{recipe.title}</h2>
         <ScorePills scores={recipe.scores} />
-        {recipe.minutes && (
-          <p className="inline-flex items-center gap-1 text-xs text-muted">
-            <Clock className="size-3" />
-            {recipe.minutes} Min.
-          </p>
-        )}
+        <p className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-muted">
+          {recipe.lastCookedOn && <CookedBadge date={recipe.lastCookedOn} />}
+          {recipe.minutes && (
+            <span className="inline-flex items-center gap-1">
+              <Clock className="size-3" />
+              {recipe.minutes} Min.
+            </span>
+          )}
+        </p>
       </div>
     </Link>
   );

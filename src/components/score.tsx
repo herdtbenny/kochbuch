@@ -18,7 +18,7 @@ export function ScorePills({ scores }: { scores: Scores }) {
             className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums ${PEOPLE[person].soft} ${PEOPLE[person].text}`}
           >
             {PEOPLE[person].initial}
-            <span className={score ? "" : "opacity-50"}>{score ?? "–"}</span>
+            <span className={score ? "" : "opacity-50"}>{score ? `${score}/10` : "–"}</span>
           </span>
         );
       })}

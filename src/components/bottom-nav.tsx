@@ -1,8 +1,9 @@
 "use client";
 
-import { BookOpen, ChartColumn, Dices, Plus } from "lucide-react";
+import { BookOpen, ChartColumn, Plus } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { RandomRecipeDialog } from "./random-recipe-dialog";
 
 const itemClass = "flex flex-col items-center gap-0.5 rounded-full px-4 py-1.5 text-[11px] font-medium transition-colors";
 
@@ -18,11 +19,7 @@ export function BottomNav() {
           <BookOpen className="size-5" />
           Rezepte
         </Link>
-        {/* Route Handler mit Redirect – bewusst kein <Link> */}
-        <a href="/zufall" className={`${itemClass} text-muted`}>
-          <Dices className="size-5" />
-          Zufall
-        </a>
+        <RandomRecipeDialog triggerClass={`${itemClass} text-muted`} />
         <Link
           href="/rezepte/neu"
           aria-label="Neues Rezept"

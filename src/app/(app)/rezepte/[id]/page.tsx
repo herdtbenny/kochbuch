@@ -1,4 +1,4 @@
-import { ArrowLeft, CalendarPlus, ChefHat, Clock, Dices, Link as LinkIcon, Pencil, Users, X } from "lucide-react";
+import { ArrowLeft, CalendarPlus, ChefHat, Clock, Link as LinkIcon, Pencil, Users, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -17,8 +17,8 @@ export async function generateMetadata({ params }: PageProps<"/rezepte/[id]">) {
   return { title: recipe ? `${recipe.title} · Unser Kochbuch` : "Unser Kochbuch" };
 }
 
-export default async function RecipePage({ params, searchParams }: PageProps<"/rezepte/[id]">) {
-  const [{ id }, query, person] = await Promise.all([params, searchParams, requirePerson()]);
+export default async function RecipePage({ params }: PageProps<"/rezepte/[id]">) {
+  const [{ id }, person] = await Promise.all([params, requirePerson()]);
   const recipe = await getRecipe(Number(id));
   if (!recipe) notFound();
 
@@ -29,7 +29,6 @@ export default async function RecipePage({ params, searchParams }: PageProps<"/r
     PERSON_IDS.flatMap((p) => (recipe.ratings[p] ? [[p, recipe.ratings[p]!.score]] : [])),
   );
   const average = averageScore(scores);
-  const fromRandom = query.zufall !== undefined;
 
   return (
     <article className="space-y-8">
@@ -46,19 +45,6 @@ export default async function RecipePage({ params, searchParams }: PageProps<"/r
           Bearbeiten
         </Link>
       </div>
-
-      {fromRandom && (
-        <div className="flex items-center justify-between gap-3 rounded-2xl bg-accent/10 px-4 py-3">
-          <p className="text-sm font-medium">Wie wär&apos;s heute damit?</p>
-          <a
-            href={`/zufall?nicht=${recipe.id}`}
-            className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-accent px-3.5 py-1.5 text-sm font-semibold text-accent-ink"
-          >
-            <Dices className="size-4" />
-            Nochmal
-          </a>
-        </div>
-      )}
 
       {/* Fotos */}
       {recipe.photos.length > 0 ? (
@@ -129,7 +115,7 @@ export default async function RecipePage({ params, searchParams }: PageProps<"/r
           <h2 className="font-display text-2xl font-semibold">Bewertung</h2>
           {average !== null && (
             <p className="text-sm text-muted">
-              Zusammen <span className="font-semibold text-ink tabular-nums">{formatScore(average)}</span> / 10
+              Zusammen <span className="font-semibold text-ink tabular-nums">{formatScore(average)}/10</span>
             </p>
           )}
         </div>
@@ -149,8 +135,14 @@ export default async function RecipePage({ params, searchParams }: PageProps<"/r
                     <span className="font-medium">{mine ? "Du" : PEOPLE[p].name}</span>
                   </div>
                   <span className={`font-display text-3xl font-semibold tabular-nums ${PEOPLE[p].text}`}>
-                    {rating ? rating.score : "–"}
-                    <span className="text-base text-muted">/10</span>
+                    {rating ? (
+                      <>
+                        {rating.score}
+                        <span className="text-base text-muted">/10</span>
+                      </>
+                    ) : (
+                      "–"
+                    )}
                   </span>
                 </div>
 

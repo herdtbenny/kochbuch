@@ -39,7 +39,7 @@ export default async function StatsPage() {
   const topTogether = [...bothRated]
     .sort((a, b) => averageScore(b.scores)! - averageScore(a.scores)!)
     .slice(0, 5)
-    .map((r) => ({ recipe: r, label: `${formatScore(averageScore(r.scores)!)} / 10` }));
+    .map((r) => ({ recipe: r, label: `${formatScore(averageScore(r.scores)!)}/10` }));
 
   const disagreements = bothRated
     .map((r) => ({ recipe: r, diff: Math.abs(r.scores.benny! - r.scores.lisa!) }))
@@ -83,6 +83,7 @@ export default async function StatsPage() {
             key={person}
             label={`Ø ${PEOPLE[person].name}`}
             value={average === null ? "–" : formatScore(Math.round(average * 10) / 10)}
+            suffix={average === null ? undefined : "/10"}
             valueClass={PEOPLE[person].text}
           />
         ))}
@@ -126,11 +127,24 @@ export default async function StatsPage() {
   );
 }
 
-function Tile({ label, value, valueClass = "" }: { label: string; value: string; valueClass?: string }) {
+function Tile({
+  label,
+  value,
+  suffix,
+  valueClass = "",
+}: {
+  label: string;
+  value: string;
+  suffix?: string;
+  valueClass?: string;
+}) {
   return (
     <div className="rounded-3xl border border-line bg-surface p-4">
       <p className="text-sm text-muted">{label}</p>
-      <p className={`font-display text-4xl font-semibold tabular-nums ${valueClass}`}>{value}</p>
+      <p className={`font-display text-4xl font-semibold tabular-nums ${valueClass}`}>
+        {value}
+        {suffix && <span className="text-base text-muted">{suffix}</span>}
+      </p>
     </div>
   );
 }

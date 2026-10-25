@@ -5,10 +5,11 @@ import { and, eq, inArray, max } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requirePerson } from "./auth";
-import { todayBerlin } from "./dates";
+import { daysBetween, todayBerlin } from "./dates";
 import { getDb } from "./db";
 import { cooks, photos, ratings, recipes } from "./db/schema";
 import { CATEGORIES } from "./categories";
+import { averageScore, listRecipes } from "./recipes";
 
 function text(formData: FormData, key: string) {
   const value = formData.get(key);
@@ -158,4 +159,24 @@ export async function deleteCook(cookId: number) {
   await requirePerson();
   await getDb().delete(cooks).where(eq(cooks.id, cookId));
   refresh();
+}
+
+/**
+ * "Was kochen wir heute?" – ein zufälliges Rezept, das gut ankam (oder noch unbewertet ist)
+ * und in den letzten zwei Wochen nicht auf dem Tisch stand.
+ */
+export async function pickRandomRecipe(excludeId?: number) {
+  await requirePerson();
+  const today = todayBerlin();
+  const all = (await listRecipes()).filter((r) => r.id !== excludeId);
+
+  const good = all.filter(
+    (r) => (averageScore(r.scores) ?? 7) >= 6 && (!r.lastCooked || daysBetween(r.lastCooked, today) >= 14),
+  );
+  const pool = good.length ? good : all;
+  if (pool.length === 0) return null;
+
+  const { id, title, category, cover, scores, cookCount, lastCooked, minutes } =
+    pool[Math.floor(Math.random() * pool.length)];
+  return { id, title, category, cover, scores, cookCount, lastCooked, minutes, today, canReroll: all.length > 1 };
 }

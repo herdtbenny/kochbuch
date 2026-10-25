@@ -23,11 +23,11 @@ export function BottomNav() {
           <BookOpen className="size-5" />
           Rezepte
         </Link>
-        <RandomRecipeDialog triggerClass={`${itemClass} text-muted`} />
         <Link href="/statistik" className={`${itemClass} ${tone("/statistik")}`}>
           <ChartColumn className="size-5" />
           Statistik
         </Link>
+        <RandomRecipeDialog triggerClass={`${itemClass} text-muted`} />
       </div>
     </nav>
   );

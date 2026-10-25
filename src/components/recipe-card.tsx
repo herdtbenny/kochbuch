@@ -12,13 +12,13 @@ export function RecipeCard({ recipe }: { recipe: RecipeSummary }) {
       href={`/rezepte/${recipe.id}`}
       className="group flex items-center gap-4 rounded-3xl border border-line bg-surface p-2.5 pr-4"
     >
-      <div className="relative size-24 shrink-0 overflow-hidden rounded-2xl bg-line sm:size-28">
+      <div className="relative size-32 shrink-0 overflow-hidden rounded-2xl bg-line sm:size-36">
         {recipe.cover ? (
           <Image
             src={recipe.cover}
             alt=""
             fill
-            sizes="112px"
+            sizes="144px"
             className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (

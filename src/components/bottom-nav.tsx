@@ -16,12 +16,9 @@ export function BottomNav({ activity }: { activity: UnreadActivity }) {
   const tone = (href: string) => (active(href) ? "text-accent" : "text-muted");
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-20 px-4 pb-[max(env(safe-area-inset-bottom),0.75rem)]">
-      <div className="mx-auto flex max-w-[calc(48rem-2rem)] items-center gap-1 rounded-full border border-line bg-surface/95 p-1.5 shadow-lg shadow-black/5">
-        <Link href="/statistik" className={`${itemClass} ${tone("/statistik")}`}>
-          <ChartColumn className="size-5" />
-          Statistik
-        </Link>
+    <nav className="fixed inset-x-0 bottom-0 z-20 px-6 pb-[max(env(safe-area-inset-bottom),0.75rem)]">
+      <div className="mx-auto flex max-w-[calc(48rem-3rem)] items-center gap-1 rounded-full border border-line bg-surface/95 p-1.5 shadow-lg shadow-black/5">
+        <Notifications initial={activity} triggerClass={`${itemClass} ${tone("/aktivitaet")}`} />
         <Link href="/" className={`${itemClass} ${tone("/")}`}>
           <BookOpen className="size-5" />
           Rezepte
@@ -30,7 +27,10 @@ export function BottomNav({ activity }: { activity: UnreadActivity }) {
           <Plus className="size-5" strokeWidth={2.5} />
           Neu
         </Link>
-        <Notifications initial={activity} triggerClass={`${itemClass} ${tone("/aktivitaet")}`} />
+        <Link href="/statistik" className={`${itemClass} ${tone("/statistik")}`}>
+          <ChartColumn className="size-5" />
+          Statistik
+        </Link>
         <RandomRecipeDialog triggerClass={`${itemClass} text-muted`} />
       </div>
     </nav>

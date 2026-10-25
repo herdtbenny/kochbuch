@@ -129,7 +129,7 @@ export function RecipeForm({ recipe }: { recipe?: ExistingRecipe }) {
       {/* Fotos */}
       <div>
         <p className="mb-1.5 text-sm font-medium">Fotos</p>
-        <div className="no-scrollbar -mx-4 flex gap-3 overflow-x-auto px-4 pb-1">
+        <div className="no-scrollbar -mx-6 flex gap-3 overflow-x-auto px-6 pb-1">
           <button
             type="button"
             onClick={() => fileInput.current?.click()}

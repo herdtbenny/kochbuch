@@ -33,7 +33,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
           <div className="absolute inset-0 bg-paper/80" />
         </div>
       )}
-      <header className="flex items-center justify-between gap-3 px-4 pt-[max(env(safe-area-inset-top),1rem)] pb-3">
+      <header className="flex items-center justify-between gap-3 px-6 pt-[max(env(safe-area-inset-top),1rem)] pb-3">
         <Link
           href="/"
           className="min-w-0 font-display text-[clamp(1rem,4.6vw,1.5rem)] leading-tight font-semibold tracking-tight whitespace-nowrap"
@@ -57,7 +57,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
           </form>
         </div>
       </header>
-      <main className="flex-1 px-4 pb-36">{children}</main>
+      <main className="flex-1 px-6 pb-36">{children}</main>
       <Toaster />
       <BottomNav activity={unread} />
     </div>

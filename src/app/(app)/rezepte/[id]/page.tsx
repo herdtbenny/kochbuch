@@ -53,7 +53,7 @@ export default async function RecipePage({ params }: PageProps<"/rezepte/[id]">)
 
       {/* Fotos */}
       {recipe.photos.length > 0 ? (
-        <div className="no-scrollbar -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4">
+        <div className="no-scrollbar -mx-6 flex snap-x snap-mandatory gap-3 overflow-x-auto px-6">
           {recipe.photos.map((photo, index) => (
             <div
               key={photo.id}

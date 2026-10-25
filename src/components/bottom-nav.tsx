@@ -16,9 +16,9 @@ export function BottomNav() {
   return (
     <nav className="fixed inset-x-0 bottom-0 z-20 px-4 pb-[max(env(safe-area-inset-bottom),0.75rem)]">
       <div className="mx-auto flex max-w-sm items-center gap-1 rounded-full border border-line bg-surface/90 p-1.5 shadow-lg shadow-black/5 backdrop-blur-md">
-        <Link href="/rezepte/neu" className={`${itemClass} bg-accent text-accent-ink shadow-md`}>
+        <Link href="/rezepte/neu" aria-label="Neues Rezept" className={`${itemClass} bg-accent text-accent-ink shadow-md`}>
           <Plus className="size-5" strokeWidth={2.5} />
-          Neues Rezept
+          Neu
         </Link>
         <Link href="/" className={`${itemClass} ${tone("/")}`}>
           <BookOpen className="size-5" />

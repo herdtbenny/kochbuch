@@ -9,6 +9,7 @@ import { useEffect, useRef, useState, useTransition, type FormEvent } from "reac
 import { saveRecipe } from "@/lib/actions";
 import { CATEGORIES, DEFAULT_CATEGORY } from "@/lib/categories";
 import { resizeImage } from "@/lib/resize-image";
+import { ListInput } from "./list-input";
 
 const MAX_NEW_PHOTOS = 8;
 
@@ -24,6 +25,13 @@ type ExistingRecipe = {
   sourceUrl: string | null;
   photos: { id: number; url: string }[];
 };
+
+function toLines(text = "") {
+  return text
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
 
 const inputClass =
   "w-full rounded-2xl border border-line bg-surface px-4 py-3 outline-none placeholder:text-muted/70 focus:border-accent";
@@ -170,25 +178,26 @@ export function RecipeForm({ recipe }: { recipe?: ExistingRecipe }) {
         />
       </Field>
 
-      <Field label="Zutaten" hint="eine pro Zeile">
-        <textarea
+      <section>
+        <h2 className="mb-1.5 text-sm font-medium">Zutaten</h2>
+        <ListInput
           name="ingredients"
-          rows={6}
-          defaultValue={recipe?.ingredients}
-          placeholder={"500 g Kartoffeln\n2 Zucchini\n1 EL Olivenöl"}
-          className={inputClass}
+          initial={toLines(recipe?.ingredients)}
+          placeholder="z. B. 500 g Kartoffeln"
+          addLabel="Zutat hinzufügen"
         />
-      </Field>
+      </section>
 
-      <Field label="Zubereitung" hint="ein Schritt pro Zeile">
-        <textarea
+      <section>
+        <h2 className="mb-1.5 text-sm font-medium">Zubereitung</h2>
+        <ListInput
           name="steps"
-          rows={6}
-          defaultValue={recipe?.steps}
-          placeholder={"Ofen auf 200 °C vorheizen.\nGemüse schneiden …"}
-          className={inputClass}
+          initial={toLines(recipe?.steps)}
+          placeholder="z. B. Ofen auf 200 °C vorheizen."
+          addLabel="Schritt hinzufügen"
+          numbered
         />
-      </Field>
+      </section>
 
       <Field label="Link zum Original" hint="optional">
         <input

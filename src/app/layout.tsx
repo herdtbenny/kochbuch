@@ -14,6 +14,11 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  // Verhindert, dass iOS beim Tippen in Felder hineinzoomt und den Zoom behält.
+  // Mit zwei Fingern zoomen geht auf dem iPhone trotzdem weiter.
+  maximumScale: 1,
   viewportFit: "cover",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#fbf7f0" },

@@ -11,8 +11,8 @@ export default function LoginPage() {
         <div className="mx-auto mb-5 flex size-16 items-center justify-center rounded-3xl bg-accent text-accent-ink">
           <ChefHat className="size-8" strokeWidth={1.6} />
         </div>
-        <h1 className="font-display text-4xl font-semibold tracking-tight">Unser Kochbuch</h1>
-        <p className="mt-2 text-muted">Unsere Lieblingsrezepte, gesammelt.</p>
+        <h1 className="font-display text-4xl font-semibold tracking-tight">Servus.</h1>
+        <p className="mt-2 text-muted">Hunger habt’s, was?</p>
       </div>
       <LoginForm avatars={avatarUrls()} />
     </main>

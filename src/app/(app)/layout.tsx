@@ -2,7 +2,6 @@ import { LogOut } from "lucide-react";
 import Link from "next/link";
 import { Avatar } from "@/components/avatar";
 import { BottomNav } from "@/components/bottom-nav";
-import { Notifications } from "@/components/notifications";
 import { Toaster } from "@/components/toaster";
 import { unreadFor } from "@/lib/activity";
 import { requirePerson } from "@/lib/auth";
@@ -40,14 +39,17 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
           Lisa und Bennys Kochbuch
         </Link>
         <div className="flex shrink-0 items-center gap-2">
-          <Notifications initial={unread} />
           <form action={logout}>
             <button
               type="submit"
               className="flex items-center gap-1 rounded-full border border-line bg-surface py-0.5 pr-2 pl-0.5 text-sm text-muted"
               aria-label={`Abmelden (${PEOPLE[person].name})`}
             >
-              <Avatar person={person} url={avatarUrls()[person]} className="size-7 text-xs" />
+              <Avatar
+                person={person}
+                url={avatarUrls()[person]}
+                className="size-7 text-xs"
+              />
               <LogOut className="size-3.5" />
             </button>
           </form>
@@ -55,7 +57,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
       </header>
       <main className="flex-1 px-4 pb-36">{children}</main>
       <Toaster />
-      <BottomNav />
+      <BottomNav activity={unread} />
     </div>
   );
 }

@@ -3,12 +3,14 @@
 import { BookOpen, ChartColumn, Plus } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { UnreadActivity } from "@/lib/activity-format";
+import { Notifications } from "./notifications";
 import { RandomRecipeDialog } from "./random-recipe-dialog";
 
 const itemClass =
   "flex min-w-0 flex-1 flex-col items-center gap-0.5 rounded-full px-2 py-1.5 text-[11px] font-medium whitespace-nowrap transition-colors";
 
-export function BottomNav() {
+export function BottomNav({ activity }: { activity: UnreadActivity }) {
   const pathname = usePathname();
   const active = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
   const tone = (href: string) => (active(href) ? "text-accent" : "text-muted");
@@ -29,6 +31,7 @@ export function BottomNav() {
           Statistik
         </Link>
         <RandomRecipeDialog triggerClass={`${itemClass} text-muted`} />
+        <Notifications initial={activity} triggerClass={`${itemClass} ${tone("/aktivitaet")}`} />
       </div>
     </nav>
   );

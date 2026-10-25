@@ -87,10 +87,6 @@ export default async function RecipePage({ params }: PageProps<"/rezepte/[id]">)
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
           <p className="text-sm font-medium text-accent">{recipe.category}</p>
           <CookedBadge date={recipe.lastCookedOn} className="text-sm" />
-          <div className="ml-auto flex gap-2">
-            <TodoToggle recipeId={recipe.id} todo={recipe.todo} />
-            <CookedTodayButton recipeId={recipe.id} cookedToday={recipe.lastCookedOn === todayBerlin()} />
-          </div>
         </div>
         <h1 className="font-display text-4xl leading-tight font-semibold text-balance">{recipe.title}</h1>
         {recipe.description && <p className="text-lg text-muted">{recipe.description}</p>}
@@ -120,6 +116,12 @@ export default async function RecipePage({ params }: PageProps<"/rezepte/[id]">)
           )}
         </div>
       </header>
+
+      {/* TODO / Heute gekocht – schließen sich gegenseitig aus */}
+      <div className="grid grid-cols-2 gap-2">
+        <TodoToggle recipeId={recipe.id} todo={recipe.todo} />
+        <CookedTodayButton recipeId={recipe.id} cookedToday={recipe.lastCookedOn === todayBerlin()} />
+      </div>
 
       {/* Zutaten */}
       {ingredients.length > 0 && (

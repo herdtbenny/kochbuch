@@ -27,7 +27,7 @@ export function TodoToggle({ recipeId, todo }: { recipeId: number; todo: boolean
           }
         })
       }
-      className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors ${
+      className={`flex w-full items-center justify-center gap-1.5 rounded-full border px-4 py-2.5 text-sm font-medium transition-colors ${
         active ? "border-accent bg-accent text-accent-ink" : "border-line bg-surface"
       }`}
     >

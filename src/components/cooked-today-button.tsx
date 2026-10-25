@@ -12,6 +12,7 @@ export function CookedTodayButton({ recipeId, cookedToday }: { recipeId: number;
     <button
       type="button"
       disabled={pending || cookedToday}
+      aria-pressed={cookedToday}
       onClick={() =>
         startTransition(async () => {
           try {
@@ -22,10 +23,12 @@ export function CookedTodayButton({ recipeId, cookedToday }: { recipeId: number;
           }
         })
       }
-      className="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-3.5 py-1.5 text-sm font-medium disabled:opacity-60"
+      className={`flex w-full items-center justify-center gap-1.5 rounded-full border px-4 py-2.5 text-sm font-medium transition-colors ${
+        cookedToday ? "border-benny bg-benny text-white" : "border-line bg-surface"
+      }`}
     >
       {pending ? <LoaderCircle className="size-4 animate-spin" /> : <CalendarCheck className="size-4" />}
-      {cookedToday ? "Heute gekocht ✓" : "Heute gekocht"}
+      Heute gekocht
     </button>
   );
 }

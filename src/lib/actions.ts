@@ -1,7 +1,7 @@
 "use server";
 
 import { del, put } from "@vercel/blob";
-import { and, eq, inArray, max } from "drizzle-orm";
+import { and, eq, inArray, max, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { logActivity, markSeen, recipeTitle, unreadFor } from "./activity";
 import { requirePerson } from "./auth";
@@ -152,10 +152,20 @@ export async function saveNotes(recipeId: number, notes: string) {
   refresh();
 }
 
-/** TODO-Schalter setzen oder entfernen. */
+/** TODO-Schalter setzen oder entfernen. TODO an nimmt ein „heute gekocht“ wieder raus. */
 export async function setTodo(recipeId: number, todo: boolean) {
   await requirePerson();
-  await getDb().update(recipes).set({ todo }).where(eq(recipes.id, recipeId));
+  await getDb()
+    .update(recipes)
+    .set(
+      todo
+        ? {
+            todo,
+            lastCookedOn: sql`case when ${recipes.lastCookedOn} = ${todayBerlin()} then null else ${recipes.lastCookedOn} end`,
+          }
+        : { todo },
+    )
+    .where(eq(recipes.id, recipeId));
   refresh();
 }
 

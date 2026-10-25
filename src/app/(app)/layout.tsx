@@ -35,11 +35,11 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
       <header className="flex items-center justify-between gap-4 px-4 pt-[max(env(safe-area-inset-top),1rem)] pb-3">
         <Link
           href="/"
-          className="font-display text-2xl font-semibold tracking-tight"
+          className="min-w-0 font-display text-xl leading-tight font-semibold tracking-tight sm:text-2xl"
         >
-          Unser Kochbuch
+          Lisa und Bennys Kochbuch
         </Link>
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           <Notifications initial={unread} />
           <form action={logout}>
             <button

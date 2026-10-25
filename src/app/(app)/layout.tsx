@@ -32,10 +32,10 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
           <div className="absolute inset-0 bg-paper/80" />
         </div>
       )}
-      <header className="flex items-center justify-between gap-4 px-4 pt-[max(env(safe-area-inset-top),1rem)] pb-3">
+      <header className="flex items-center justify-between gap-3 px-4 pt-[max(env(safe-area-inset-top),1rem)] pb-3">
         <Link
           href="/"
-          className="min-w-0 font-display text-xl leading-tight font-semibold tracking-tight sm:text-2xl"
+          className="min-w-0 font-display text-[clamp(1rem,4.6vw,1.5rem)] leading-tight font-semibold tracking-tight whitespace-nowrap"
         >
           Lisa und Bennys Kochbuch
         </Link>
@@ -44,11 +44,11 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
           <form action={logout}>
             <button
               type="submit"
-              className="flex items-center gap-2 rounded-full border border-line bg-surface py-1 pr-3 pl-1 text-sm text-muted"
+              className="flex items-center gap-1 rounded-full border border-line bg-surface py-0.5 pr-2 pl-0.5 text-sm text-muted"
               aria-label={`Abmelden (${PEOPLE[person].name})`}
             >
               <Avatar person={person} url={avatarUrls()[person]} className="size-7 text-xs" />
-              <LogOut className="size-4" />
+              <LogOut className="size-3.5" />
             </button>
           </form>
         </div>

@@ -27,7 +27,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
           <img
             src={background}
             alt=""
-            className="size-full scale-105 object-cover object-[35%_center] blur-[3px]"
+            className="size-full scale-105 object-cover object-[20%_center] blur-[3px]"
           />
           <div className="absolute inset-0 bg-paper/80" />
         </div>

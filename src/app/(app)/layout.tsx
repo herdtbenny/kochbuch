@@ -7,9 +7,18 @@ import { logout } from "../login/actions";
 
 export default async function AppLayout({ children }: LayoutProps<"/">) {
   const person = await requirePerson();
+  const background = process.env.BACKGROUND_IMAGE_URL;
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-3xl flex-col">
+      {background && (
+        // Liegt in Vercel Blob statt im (öffentlichen) Repo und wird erst nach dem Login ausgeliefert
+        <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={background} alt="" className="size-full scale-105 object-cover blur-[3px]" />
+          <div className="absolute inset-0 bg-paper/80" />
+        </div>
+      )}
       <header className="flex items-center justify-between gap-4 px-4 pt-[max(env(safe-area-inset-top),1rem)] pb-3">
         <Link href="/" className="font-display text-2xl font-semibold tracking-tight">
           Unser Kochbuch

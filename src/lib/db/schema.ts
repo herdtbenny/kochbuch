@@ -1,4 +1,5 @@
-import { date, integer, pgTable, primaryKey, serial, text, timestamp } from "drizzle-orm/pg-core";
+import { date, integer, jsonb, pgTable, primaryKey, serial, text, timestamp } from "drizzle-orm/pg-core";
+import type { ActivityMeta } from "../activity-format";
 
 export const recipes = pgTable("recipes", {
   id: serial("id").primaryKey(),
@@ -51,4 +52,21 @@ export const cooks = pgTable("cooks", {
   note: text("note"),
   createdBy: text("created_by").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+/** Was Benny oder Lisa gemacht hat – für Benachrichtigungen und den Rückblick */
+export const activities = pgTable("activities", {
+  id: serial("id").primaryKey(),
+  actor: text("actor").notNull(),
+  type: text("type").notNull(),
+  recipeId: integer("recipe_id").references(() => recipes.id, { onDelete: "set null" }),
+  /** Titel wird mitgespeichert, damit der Eintrag auch nach dem Löschen lesbar bleibt */
+  meta: jsonb("meta").$type<ActivityMeta>().notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+/** Bis zu welcher Aktivität jemand alles gesehen hat */
+export const activityReads = pgTable("activity_reads", {
+  person: text("person").primaryKey(),
+  lastSeenId: integer("last_seen_id").notNull().default(0),
 });

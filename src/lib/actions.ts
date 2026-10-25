@@ -4,6 +4,7 @@ import { del, put } from "@vercel/blob";
 import { and, eq, inArray, max } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { logActivity, markSeen, recipeTitle, unreadFor } from "./activity";
 import { requirePerson } from "./auth";
 import { daysBetween, todayBerlin } from "./dates";
 import { getDb } from "./db";
@@ -104,6 +105,12 @@ export async function saveRecipe(formData: FormData): Promise<{ error: string } 
     await db.insert(photos).values(uploaded.map((blob) => ({ recipeId, url: blob.url, position: position++ })));
   }
 
+  if (!id) {
+    await logActivity(person, "recipe_created", recipeId, { title, count: files.length });
+  } else if (files.length) {
+    await logActivity(person, "photos_added", recipeId, { title, count: files.length });
+  }
+
   refresh();
   return { id: recipeId };
 }
@@ -129,15 +136,21 @@ export async function rateRecipe(recipeId: number, score: number) {
       target: [ratings.recipeId, ratings.person],
       set: { score, updatedAt: new Date() },
     });
+  await logActivity(person, "rated", recipeId, { title: await recipeTitle(recipeId), score });
   refresh();
 }
 
 export async function saveRatingComment(recipeId: number, formData: FormData) {
   const person = await requirePerson();
-  await getDb()
+  const comment = optionalText(formData, "comment");
+  const [previous] = await getDb()
     .update(ratings)
-    .set({ comment: optionalText(formData, "comment"), updatedAt: new Date() })
-    .where(and(eq(ratings.recipeId, recipeId), eq(ratings.person, person)));
+    .set({ comment, updatedAt: new Date() })
+    .where(and(eq(ratings.recipeId, recipeId), eq(ratings.person, person)))
+    .returning({ id: ratings.recipeId });
+  if (previous && comment) {
+    await logActivity(person, "commented", recipeId, { title: await recipeTitle(recipeId), comment });
+  }
   refresh();
 }
 
@@ -152,6 +165,7 @@ export async function addCook(recipeId: number, formData: FormData) {
       note: optionalText(formData, "note"),
       createdBy: person,
     });
+  await logActivity(person, "cooked", recipeId, { title: await recipeTitle(recipeId) });
   refresh();
 }
 
@@ -179,4 +193,15 @@ export async function pickRandomRecipe(excludeId?: number) {
   const { id, title, category, cover, scores, cookCount, lastCooked, minutes } =
     pool[Math.floor(Math.random() * pool.length)];
   return { id, title, category, cover, scores, cookCount, lastCooked, minutes, today, canReroll: all.length > 1 };
+}
+
+/** Für das Live-Popup: neue Aktivitäten der anderen Person seit `afterId`. */
+export async function fetchNewActivity(afterId: number) {
+  const person = await requirePerson();
+  return unreadFor(person, afterId);
+}
+
+export async function markActivitySeen(uptoId: number) {
+  const person = await requirePerson();
+  if (Number.isInteger(uptoId) && uptoId > 0) await markSeen(person, uptoId);
 }
